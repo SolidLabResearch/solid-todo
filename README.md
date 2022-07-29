@@ -17,4 +17,3 @@ Todo application which saves the todos on your Solid-pod.
    ```
    npm run start
    ```
-
