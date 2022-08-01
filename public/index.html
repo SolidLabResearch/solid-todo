@@ -15,7 +15,7 @@
       user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
     -->
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <script defer src="/src/index.tsx"></script>
+    <script type="text/babel" defer src="/src/index.tsx"></script>
     <!--
       Notice the use of %PUBLIC_URL% in the tags above.
       It will be replaced with the URL of the `public` folder during the build.
@@ -33,12 +33,20 @@
       <section id="login" class="panel">
         <div class="row">
           <label id="labelLogin" for="btnLogin"
-            >1. Click the button to log into
+            >Hello! Click the button to log into Solid to do app:
             <span id="solid_identity_provider"
-              >...provided by the JavaScript code...</span
+              > <span id=""...provided by the JavaScript code...</span
             >:
           </label>
-          <button name="btnLogin" id="btnLogin">Login</button>
+          <button name="btnLogin" id="solidbtnLogin">Login</button>
+          <br><br>
+          <label id="labelLogin" for="btnLogin"
+            >or Click the button to log into Solid to do app with
+            <span id="inrupt_identity_provider"
+              > <span id=""...provided by the JavaScript code...</span
+            >:
+          </label>
+          <button name="btnLogin" id="inruptbtnLogin">Login</button>
           <p id="labelStatus" class="labelStatus"></p>
           <div id="root"></div>
         </div>
