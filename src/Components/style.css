@@ -64,7 +64,7 @@
     padding: 20px;
     margin-top: 15px;
     background-image: url("https://c.neh.tw/thumb/f/350/1c6369b62f0846058d07.jpg");
-    
+    transition: 0.2s;
   }
   
   .drag {
