@@ -22,7 +22,7 @@ const App: React.FC = () => {
   console.log(todos);
   return (
     <div className='App'>
-      <span className='heading'>SOlid-To-Do</span>
+      <span className='heading'>Solid-To-Do</span>
       
       <InputField todo={todo} setTodo={setTodo} handleAdd = {handleAdd} />
 
