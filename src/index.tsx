@@ -1,21 +1,21 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+// import React from 'react';
+// import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import { createRoot } from 'react-dom/client';
-import InputField from './Components/InputField';
+//import InputField from './Components/InputField';
 
 
-import {
-  getSolidDataset,
-  getThing,
-  setThing,
-  getStringNoLocale,
-  setStringNoLocale,
-  saveSolidDatasetAt
-} from "@inrupt/solid-client";
+// import {
+//   getSolidDataset,
+//   getThing,
+//   setThing,
+//   getStringNoLocale,
+//   setStringNoLocale,
+//   saveSolidDatasetAt
+// } from "@inrupt/solid-client";
 import { Session } from "@inrupt/solid-client-authn-browser";
-import { VCARD } from "@inrupt/vocab-common-rdf";
+//import { VCARD } from "@inrupt/vocab-common-rdf";
 
 // If your Pod is *not* on `solidcommunity.net`, change this to your identity provider.
 const SOLID_IDENTITY_PROVIDER = "https://solidcommunity.net";
@@ -82,11 +82,11 @@ async function writeProfile() {
     document.getElementById("labelWriteStatus")!.setAttribute("role", "alert");
     return;
   
-  const webID = session.info.webId;
-  console.log(webID);
-  const profileDocumentUrl : URL = new URL(webID as string);
+  //const webID = session.info.webId;
+  //console.log(webID);
+  //const profileDocumentUrl : URL = new URL(webID as string);
   
-  profileDocumentUrl.hash = "";
+  //profileDocumentUrl.hash = "";
 
   // let myProfileDataset = await getSolidDataset(profileDocumentUrl.href, {fetch: session.fetch});
 
