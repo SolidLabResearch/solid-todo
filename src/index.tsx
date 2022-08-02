@@ -23,7 +23,7 @@ const INRUPT_IDENTITY_PROVIDER = "https://inrupt.net";
 document.getElementById("solid_identity_provider")!.innerHTML = `[<a target="_blank" href="${SOLID_IDENTITY_PROVIDER}">${SOLID_IDENTITY_PROVIDER}</a>]`;
 document.getElementById("inrupt_identity_provider")!.innerHTML = `[<a target="_blank" href="${INRUPT_IDENTITY_PROVIDER}">${INRUPT_IDENTITY_PROVIDER}</a>]`;
 
-const NOT_ENTERED_WEBID ="...not logged in yet - but enter any WebID to read from its profile...";
+//const NOT_ENTERED_WEBID ="...not logged in yet - but enter any WebID to read from its profile...";
 
 const session = new Session();
 //console.log(session);
@@ -107,10 +107,10 @@ button2Login!.onclick = function () {
   login2();
 };
 
-writeForm.addEventListener("submit", (event) => {
-   event.preventDefault(); 
-   writeProfile();
-  });
+// writeForm.addEventListener("submit", (event) => {
+//    event.preventDefault(); 
+//    writeProfile();
+//   });
 
 
 // If you want to start measuring performance in your app, pass a function
