@@ -30,7 +30,7 @@ const session = new Session();
 const buttonLogin = document.getElementById("solidbtnLogin");
 const button2Login = document.getElementById("inruptbtnLogin");
 
-const writeForm = document.getElementById("input") as HTMLInputElement;
+//const writeForm = document.getElementById("input") as HTMLInputElement;
 //const readForm = document.getElementById("readForm");
 
 // 1a. Start Login Process. Call session.login() function.
@@ -74,13 +74,13 @@ async function handleRedirectAfterLogin() {
 handleRedirectAfterLogin();
 
 //Write to profile
-async function writeProfile() {
+// async function writeProfile() {
   
-  if (!session.info.isLoggedIn) {
-    // You must be authenticated to write.
-    document.getElementById("labelWriteStatus")!.textContent = `...you can't make a to-do list until you first login!`;
-    document.getElementById("labelWriteStatus")!.setAttribute("role", "alert");
-    return;
+//   if (!session.info.isLoggedIn) {
+//     // You must be authenticated to write.
+//     document.getElementById("labelWriteStatus")!.textContent = `...you can't make a to-do list until you first login!`;
+//     document.getElementById("labelWriteStatus")!.setAttribute("role", "alert");
+//     return;
   
   //const webID = session.info.webId;
   //console.log(webID);
@@ -96,9 +96,9 @@ async function writeProfile() {
   
  
   
-  }
+//   }
 
-}
+// }
 buttonLogin!.onclick = function () {
   login();
 };
