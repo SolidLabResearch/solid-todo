@@ -17,3 +17,5 @@ Todo application which saves the todos on your Solid-pod.
    ```
    npm run start
    ```
+
+## The link to live version is [here](https://vidyashreetarikereugent.github.io/solid-todo/)
