@@ -28,12 +28,15 @@ function execute(query: string, initialDocument: string, session: Session, bindi
       [sessionKey]: session,
       lenient: true
     }
-    engine.queryBindings(query, context).then((bindingsStream: BindingsStream) => {
-      bindingsStream
-        .on("data", (bindings: Bindings) => bindingsHandler(bindings))
-        .on("error", (error: Error) => reject(error))
-        .on("end", () => resolve())
-    })
+    engine
+      .queryBindings(query, context)
+      .then((bindingsStream: BindingsStream) => {
+        bindingsStream
+          .on("data", (bindings: Bindings) => bindingsHandler(bindings))
+          .on("error", (error: Error) => reject(error))
+          .on("end", () => resolve())
+      })
+      .catch((reason: any) => reject(reason))
   })
 }
 
