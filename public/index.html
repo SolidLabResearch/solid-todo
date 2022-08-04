@@ -2,53 +2,29 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="Web site created using create-react-app"
-    />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-    <!--
-      manifest.json provides metadata used when your web app is installed on a
-      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
-    -->
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <script type="text/babel" defer src="/src/index.tsx"></script>
-    <!--
-      Notice the use of %PUBLIC_URL% in the tags above.
-      It will be replaced with the URL of the `public` folder during the build.
-      Only files inside the `public` folder can be referenced from the HTML.
-
-      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
-      work correctly both with client-side routing and a non-root public URL.
-      Learn how to configure a non-root public URL by running `npm run build`.
+    <meta name="description" content="Todo application which saves the todos on your Solid-pod" />
+    <!-- need to find a way to make these work later, they do not get bundled when built
+    <link rel="apple-touch-icon" href="/logo192.png" />
+    <link rel="manifest" href="/manifest.json" />
     -->
     <title>React App</title>
   </head>
-  <body>
+  <body class="h-full flex flex-column bg-background">
     <noscript>You need to enable JavaScript to run this app.</noscript>
-    
-      <section id="login" class="panel">
-        <div class="row">
-          <label id="labelLogin" for="btnLogin"
-            >Hello! Click the button to log into Solid to do app:
-            <span id="solid_identity_provider"
-              > ...provided by the JavaScript code...</span>:
-          </label>
-          <button name="btnLogin" id="solidbtnLogin">Login</button>
-          <br><br>
-          <label id="labelLogin" for="btnLogin"
-            >or Click the button to log into Solid to do app with
-            <span id="inrupt_identity_provider"
-              > ...provided by the JavaScript code...</span>:
-          </label>
-          <button name="btnLogin" id="inruptbtnLogin">Login</button>
-          <p id="labelStatus" class="labelStatus"></p>
-          <div id="root"></div>
-        </div>
-      </section>
-
-    </body>
+    <section id="login" class="panel">
+      <div class="row">
+        <label for="identityProviderSelection">Hello! Please select an identity provider to log in:</label>
+        <select id="identityProviderSelection" class="p-1">
+          <option value="https://solidcommunity.net">https://solidcommunity.net</option>
+          <option value="https://inrupt.net">https://inrupt.net</option>
+          <option value="http://localhost:3000">http://localhost:3000</option>
+        </select>
+        <button id="btnLogin" class="py-0.5 px-2 bg-gray-200 hover:bg-gray-600 hover:text-white">Login</button>
+        <p id="labelStatus" class="labelStatus"></p>
+        <div id="root"></div>
+      </div>
+    </section>
+  </body>
 </html>

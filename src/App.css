@@ -1,6 +1,6 @@
-@import url('https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap");
 
-.App{
+.App {
   width: 100vw;
   height: 100vh;
   display: flex;
@@ -10,7 +10,7 @@
   font-family: "Indie Flower", cursive;
 }
 
-.heading{
+.heading {
   text-transform: uppercase;
   font-size: 40px;
   margin: 30px 0;
@@ -19,8 +19,8 @@
   text-align: center;
 }
 
-@media (max-width: 800px){
-  .heading{
+@media (max-width: 800px) {
+  .heading {
     margin: 15px 0;
     font-size: 35px;
   }
