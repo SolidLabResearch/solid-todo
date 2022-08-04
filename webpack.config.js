@@ -1,31 +1,33 @@
 const path = require("path")
+const webpack = require("webpack")
 const HtmlWebpackPlugin = require("html-webpack-plugin")
-const ProgressPlugin = require("webpack").ProgressPlugin
 const NodePolyfillPlugin = require("node-polyfill-webpack-plugin")
+//const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin
 
-/** @type {import('webpack').Configuration} */
+/** @type {webpack.Configuration} */
 module.exports = {
   module: "development",
   entry: "./src/index.tsx",
-  devtool: "inline-source-map",
+  devtool: false, // "inline-source-map", <- this makes build size explode
   output: {
     path: path.resolve(__dirname, "build")
   },
   devServer: {
     host: "localhost",
     port: process.env.PORT || 4000,
-    historyApiFallback: true,
-    hot: true
+    historyApiFallback: true
   },
   plugins: [
-    new ProgressPlugin(),
+    new webpack.ProgressPlugin(),
     new HtmlWebpackPlugin({
       template: "public/index.html",
       favicon: "public/favicon.ico"
     }),
-    new NodePolyfillPlugin({
-      includeAliases: ["stream", "process"]
-    })
+    new NodePolyfillPlugin()
+    /*new BundleAnalyzerPlugin({
+      analyzerMode: "static",
+      openAnalyzer: false // true to have the report open after build
+    })*/
   ],
   resolve: {
     extensions: [".tsx", ".ts", ".js"]
