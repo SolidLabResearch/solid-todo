@@ -8,7 +8,7 @@ const NodePolyfillPlugin = require("node-polyfill-webpack-plugin")
 module.exports = {
   module: "development",
   entry: "./src/index.tsx",
-  devtool: false, // "inline-source-map", <- this makes build size explode
+  devtool: "source-map",
   output: {
     path: path.resolve(__dirname, "build")
   },
