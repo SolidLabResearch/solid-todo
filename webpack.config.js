@@ -23,7 +23,9 @@ module.exports = {
       template: "public/index.html",
       favicon: "public/favicon.ico"
     }),
-    new NodePolyfillPlugin()
+    new NodePolyfillPlugin({
+      includeAliases: ["stream", "process"]
+    })
   ],
   resolve: {
     extensions: [".tsx", ".ts", ".js"]
