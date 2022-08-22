@@ -1,29 +1,23 @@
-import React, { useState } from "react"
-import "./App.css"
-import TodoList from "./Components/TodoList"
-import InputField from "./Components/InputField"
-import { type ITodo } from "./model"
+import React from 'react';
+import './App.css';
+import { UrlString } from '@inrupt/solid-client';
+import { Session } from '@inrupt/solid-client-authn-browser';
+import Login from './login'
 
-const App: React.FC = () => {
-  const [todo, setTodo] = useState<string>("")
-  const [todos, setTodos] = useState<Array<ITodo>>([])
+interface AppProps  {
+  weburl ?: UrlString;
+  ses ?: Session;
+}
 
-  const handleAdd = (e: React.FormEvent) => {
-    e.preventDefault()
+const App: React.FC<AppProps> = (props):JSX.Element => {  
+  return (
+    <div className='App'>
+      
+      <span className='heading'>Solid-To-Do</span>
 
-    if (todo) {
-      setTodos([...todos, { id: Date.now(), todo, isDone: false }])
-      setTodo("")
-    }
+      <Login />
+</div>   
+  );
   }
 
-  console.log(todos)
-  return (
-    <div className="App">
-      <span className="heading">Solid-To-Do</span>
-      <InputField todo={todo} setTodo={setTodo} handleAdd={handleAdd} />
-      <TodoList todos={todos} setTodos={setTodos} />
-    </div>
-  )
-}
-export default App
+export default App;
