@@ -1,76 +1,146 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { Session } from "@inrupt/solid-client-authn-browser";
-import { VCARD } from "@inrupt/vocab-common-rdf";
+import { useEffect }  from "react";
+import { LoginButton, LogoutButton, Text, useSession, CombinedDataProvider } from "@inrupt/solid-ui-react";
+import { getSolidDataset, getUrlAll, getThing } from "@inrupt/solid-client";
+import { useState } from "react";
+import InputField from "./Components/InputField";
+import TodoList from "./Components/TodoList";
+import GetOrCreateTodoList from './utils';
+//import { QueryEngine } from "@comunica/query-sparql";
+//import { QueryEngine } from "@comunica/query-sparql/lib/QueryEngine";
 
-// If your Pod is *not* on `solidcommunity.net`, change this to your identity provider.
-const SOLID_IDENTITY_PROVIDER = "https://solidcommunity.net";
-const INRUPT_IDENTITY_PROVIDER = "https://inrupt.net";
-document.getElementById("solid_identity_provider")!.innerHTML = `[<a target="_blank" href="${SOLID_IDENTITY_PROVIDER}">${SOLID_IDENTITY_PROVIDER}</a>]`;
-document.getElementById("inrupt_identity_provider")!.innerHTML = `[<a target="_blank" href="${INRUPT_IDENTITY_PROVIDER}">${INRUPT_IDENTITY_PROVIDER}</a>]`;
+//import { Bindings, BindingsStream, QueryStringContext } from "@comunica/types"
 
-const NOT_ENTERED_WEBID ="...not logged in yet - but enter any WebID to read from its profile...";
+//const engine: QueryEngine = new QueryEngine()
 
-const session = new Session();
-console.log(session);
-const buttonLogin = document.getElementById("solidbtnLogin");
-const button2Login = document.getElementById("inruptbtnLogin");
+const authOptions = {
+    clientName: "Solid Todo App",
+  };
 
-//const writeForm = document.getElementById("writeForm");
-//const readForm = document.getElementById("readForm");
+const STORAGE_PREDICATE = "http://www.w3.org/ns/pim/space#storage";
 
-// 1a. Start Login Process. Call session.login() function.
-async function login() {
-  if (!session.info.isLoggedIn) {
-    await session.login({
-      oidcIssuer: SOLID_IDENTITY_PROVIDER ,
-      clientName: "Inrupt tutorial client app",
-      redirectUrl: window.location.href
+const solidExp: RegExp = /solidcommunity/
+const inruptExp: RegExp = /inrupt/
+
+function Login() {
+
+const { session } = useSession();
+const [oidcIssuer, setOidcIssuer] = useState("");
+ 
+const [todos, setTodos] = useState();
+
+useEffect(() => {
+  if (!session || !session.info.isLoggedIn) return;
+  (async () => {
+    const profileDataset = await getSolidDataset(session.info.webId as any, {
+      fetch: session.fetch as any,
     });
-  }
-}
+    const profileThing = getThing(profileDataset, session.info.webId as any);
+    const podsUrls = getUrlAll(profileThing as any, STORAGE_PREDICATE);
+    const pod = podsUrls[0];
+    const containerUri = `${pod}todos/`;
+    const list = await GetOrCreateTodoList(containerUri, session.fetch);
+    setTodos(list as any);
+  })();
+}, [session, session.info.isLoggedIn]);
 
-async function login2() {
-  if (!session.info.isLoggedIn) {
-    await session.login({
-      oidcIssuer: INRUPT_IDENTITY_PROVIDER,
-      clientName: "Inrupt tutorial client app",
-      redirectUrl: window.location.href
-    });
-  }
-}
+async function validate (event) {
+  var xyz = event.target.value
 
-// 1b. Login Redirect. Call session.handleIncomingRedirect() function.
-// When redirected after login, finish the process by retrieving session information.
-async function handleRedirectAfterLogin() {
-  await session.handleIncomingRedirect(window.location.href);
-  if (session.info.isLoggedIn) {
-    // Update the page with the status.
-    document.getElementById("labelStatus")!.innerHTML = `Your session is logged in with the WebID [<a target="_blank" href="${session.info.webId}">${session.info.webId}</a>].`;
-    document.getElementById("labelStatus")!.setAttribute("role", "alert");
-    //(document.getElementById("webID")as HTMLElement).value = session.info.webId;
+  console.log(xyz)
+
   
-    
-    // ReactDOM.render(
-    //   <React.StrictMode>
-    //     <App />
-    //   </React.StrictMode>,
-    //   document.getElementById('root')
-    // );
- }
+//    const bindingsStream = await engine.queryBindings(`SELECT ?o WHERE {?s <http://www.w3.org/ns/solid/terms#oidcIssuer> ?o.}`, {sources: [`${xyz}`],});
+//    const bindings = await bindingsStream.toArray();
+//    return(bindings[0].get('object').value);
+//   // console.log(bindings[0].o.value)
+  
+  
+// }
+  if( solidExp.test(xyz) ){
+    setOidcIssuer("https://solidcommunity.net/");
+  }
+
+  if( inruptExp.test(xyz) ){
+    setOidcIssuer("https://inrupt.net/")
+  }
 }
 
-handleRedirectAfterLogin();
+  const handleChange = (event: any) => {
+    setOidcIssuer(event.target.value);
+  };
 
+  var webID = session.info.webId as any
 
-buttonLogin!.onclick = function () {
-  login();
-};
+  return (
+    <div className="heading">
+      {session.info.isLoggedIn ? (
+        <CombinedDataProvider
+          datasetUrl={webID} 
+          thingUrl={webID}
+        >
+          <div className="message logged-in">
+            <span>You are logged in as: </span>
+            <Text properties={[
+                "http://www.w3.org/2006/vcard/ns#fn",
+                "http://xmlns.com/foaf/0.1/name",
+              ]} />
+              <LogoutButton 
+                onError={function noRefCheck(){}}
+                onLogout={function noRefCheck(){}}              
+              />
+          </div>  
+          <section>
+          <InputField todos={todos} setTodos={setTodos}  />
+          <TodoList todos={todos} setTodos={setTodos} />
+          </section>
+        </CombinedDataProvider>
+      ) : (
+        <div className="message">
+          <span>You are not logged in. </span>
+        <br></br>
+	      <span>
+            Log in with:
+            <input
+              className="oidc-issuer-input "
+              type="text"
+              name="oidcIssuer"
+              list="providers"
+              value={oidcIssuer}
+              onChange={handleChange}
+            />
+          <datalist id="providers">
+            <option value="https://solidcommunity.net/" />
+            <option value="https://inrupt.net/" />
+          </datalist>
+          </span>
+		  <LoginButton
+		     oidcIssuer={oidcIssuer}
+		     redirectUrl={window.location.href}
+		     authOptions={authOptions}
+		   />
 
-button2Login!.onclick = function () {
-  login2();
-};
+        <br></br>
+<span>
+        Login with webID:
+        <input 
+        className="oidc-issuer-input "
+          type="text"
+          name="oidcIssuer"
+          placeholder="webID"
+          defaultValue={oidcIssuer}
+          onChange = {validate}
+        />
+        </span>
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
+        <LoginButton
+		     oidcIssuer={oidcIssuer}
+		     redirectUrl={window.location.href}
+		     authOptions={authOptions}
+		   />
+      </div>
+      )}
+    </div>
+  );
+}
+
+export default Login;
