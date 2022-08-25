@@ -19,3 +19,14 @@ Todo application which saves the todos on your Solid-pod.
    ```
 
 ## The link to live version is [here](https://vidyashreetarikereugent.github.io/solid-todo/)
+
+----
+ 
+## Challenge completion criteria
+
+- [ ] Login with WebId (at least Inrupt and CSS)
+- [ ] Query Todo-Items from Pod and display them in the app
+- [ ] Create new Todo-Items and store them in the pod
+- [ ] Edit Todo-Items and update them in the pod
+- [ ] Share Todo-Lists and assign Todo-Items to different people
+- [ ] Allow user to choose how (one file / multiple files) and where (directory structure) to Todo-Items should be stored. 
