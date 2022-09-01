@@ -1,21 +1,20 @@
-import React, { useEffect, useState } from "react"
-import { useRef } from "react"
-import { type ITodo } from "../model"
-import { AiFillEdit, AiFillDelete } from "react-icons/ai"
-import { MdDone } from "react-icons/md"
-import "./style.css"
+import React, { useEffect, useState, useRef } from 'react'
+import { type ITodo } from '../logic/model'
+import { AiFillEdit, AiFillDelete } from 'react-icons/ai'
+import { MdDone } from 'react-icons/md'
+// import "./style.css"
 
-type Props = {
+interface ISingleTodoProps {
   todo: ITodo
   todos: ITodo[]
   setTodos: React.Dispatch<React.SetStateAction<ITodo[]>>
 }
 
-const SingleTodo = ({ todo, todos, setTodos }: Props) => {
+const SingleTodo: React.FC<ISingleTodoProps> = ({ todo, todos, setTodos }: ISingleTodoProps): JSX.Element => {
   const [edit, setEdit] = useState<boolean>(false)
   const [editTodo, setEditTodo] = useState<string>(todo.todo)
 
-  const handleDone = (id: number) => {
+  const handleDone = (id: number): void => {
     setTodos(todos.map((todo) => (todo.id === id ? { ...todo, isDone: !todo.isDone } : todo)))
   }
 
@@ -24,14 +23,14 @@ const SingleTodo = ({ todo, todos, setTodos }: Props) => {
     inputRef.current?.focus()
   }, [edit])
 
-  const handleEdit = (e: React.FormEvent, id: number) => {
+  const handleEdit = (e: React.FormEvent, id: number): void => {
     e.preventDefault()
     setTodos(todos.map((todo) => (todo.id === id ? { ...todo, todo: editTodo } : todo)))
     console.log(todo)
     setEdit(false)
   }
 
-  const handleDelete = (id: number) => {
+  const handleDelete = (id: number): void => {
     setTodos(todos.filter((todo) => todo.id !== id))
   }
 

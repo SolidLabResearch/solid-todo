@@ -31,7 +31,10 @@ module.exports = {
     }) */
   ],
   resolve: {
-    extensions: ['.tsx', '.ts', '.js']
+    extensions: ['.tsx', '.ts', '.js'],
+    alias: {
+      stream: require.resolve('readable-stream')
+    }
   },
   experiments: {
     topLevelAwait: true

@@ -9,22 +9,14 @@
     <link rel="apple-touch-icon" href="/logo192.png" />
     <link rel="manifest" href="/manifest.json" />
     -->
-    <title>React App</title>
+    <title>Solid-To-Do</title>
   </head>
-  <body class="h-full flex flex-column bg-background">
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <section id="login" class="panel">
-      <!-- <div class="row">
-        <label for="identityProviderSelection">Hello! Please select an identity provider to log in:</label>
-        <select id="identityProviderSelection" class="p-1">
-          <option value="https://solidcommunity.net">https://solidcommunity.net</option>
-          <option value="https://inrupt.net">https://inrupt.net</option>
-          <option value="http://localhost:3000">http://localhost:3000</option>
-        </select>
-        <button id="btnLogin" class="py-0.5 px-2 bg-gray-200 hover:bg-gray-600 hover:text-white">Login</button>
-        <p id="labelStatus" class="labelStatus"></p> -->
-        <div id="root"></div>
-      </div>
-    </section>
+  <body class="flex flex-col bg-background">
+    <header class="flex flex-row justify-center">
+      <h1 class="uppercase text-4xl my-7 text-center">Solid-To-Do</h1>
+    </header>
+    <main id="root" class="flex flex-col flex-grow items-center">
+      <noscript>You need to enable JavaScript to run this app.</noscript>
+    </main>
   </body>
 </html>
