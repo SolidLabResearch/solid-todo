@@ -1,15 +1,15 @@
 import { useRef, useState } from 'react'
-//import { useSession } from '@inrupt/solid-ui-react'
-import { fetch } from "@inrupt/solid-client-authn-browser";
-//import { addDatetime, addStringNoLocale, addUrl, createThing, getSourceUrl, saveSolidDatasetAt, setThing } from '@inrupt/solid-client'
+// import { useSession } from '@inrupt/solid-ui-react'
+import { fetch } from '@inrupt/solid-client-authn-browser';
+// import { addDatetime, addStringNoLocale, addUrl, createThing, getSourceUrl, saveSolidDatasetAt, setThing } from '@inrupt/solid-client'
 
-interface IInputFieldProps {
-  todos: any
-  setTodos: any
-}
+// interface IInputFieldProps {
+//   todos: any
+//   setTodos: any
+// }
 
-const InputField = ({ todos, setTodos, file}: any) => {
-  //const { session } = useSession()
+const InputField = ({ todos, setTodos, file }: any) : JSX.Element => {
+  // const { session } = useSession()
   const inputRef = useRef<HTMLInputElement>(null)
 
   const [todo, setTodo] = useState<string>('')
@@ -19,18 +19,16 @@ const InputField = ({ todos, setTodos, file}: any) => {
   // const TODO_VALUE = 'http://schema.org/TextDigitalDocument'
   // const TODO_PROPERTY = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type'
 
-  const addTodo = async (text: string) => {
-
-    const query= `INSERT DATA {<TodoList> <TodoItem> <${text}>.}`;
+  const addTodo = async (text: string) : Promise<void> => {
+    const query = `INSERT DATA {<TodoList> <TodoItem> <${text}>.}`
 
     const response = await fetch(file, {
       method: 'POST',
-      headers: {'Content-Type': 'application/sparql-update'},
-      body: query,
-    });
-    if (300<response.status&&response.status<600) {
-      console.log(` Error code is ${response.status} 
-      Your friend may not have used our app yet!`);
+      headers: { 'Content-Type': 'application/sparql-update' },
+      body: query
+    })
+    if ( 300 < response.status && response.status < 600 ) {
+      console.log(` Error code is ${ response.status } `)
     }
 
     // const indexUrl = getSourceUrl(todos)

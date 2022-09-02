@@ -3,7 +3,7 @@ import { LoginButton, LogoutButton, Text, useSession, CombinedDataProvider } fro
 // import { getSolidDataset, getUrlAll, getThing } from '@inrupt/solid-client'
 // import { ITodo } from '../logic/model'
 import { findOidcIssuer } from '../logic/query'
-//import { getOrCreateTodoList, getTodoListViaQuery } from '../logic/utils'
+// import { getOrCreateTodoList, getTodoListViaQuery } from '../logic/utils'
 import InputField from './InputField'
 import TodoList from './TodoList'
 import { QueryEngine } from '@comunica/query-sparql'
@@ -12,7 +12,7 @@ const authOptions = {
   clientName: 'Solid Todo App'
 }
 
-//const STORAGE_PREDICATE = 'http://www.w3.org/ns/pim/space#storage'
+// const STORAGE_PREDICATE = 'http://www.w3.org/ns/pim/space#storage'
 
 const keywordToProviderMap: Map<string, string> = new Map<string, string>([
   ['solidcommunity', 'https://solidcommunity.net/'],
@@ -23,7 +23,7 @@ const Login: React.FC = (): JSX.Element => {
   const { session } = useSession()
   const [oidcIssuer, setOidcIssuer] = useState('http://localhost:3000')
 
-  const [file, setFile] = useState("") 
+  const [file, setFile] = useState('')
 
   // const [todos, setTodos] = useState<ITodo[]>(new Array<ITodo>())
   const [todos, setTodos] = useState<any>()
@@ -31,41 +31,38 @@ const Login: React.FC = (): JSX.Element => {
   useEffect(() => {
     if (!session.info.isLoggedIn) return
 
-    (async  () => {
-    
-      const myEngine = new QueryEngine();
+    (async () :Promise<void> => {    
+      const myEngine = new QueryEngine()
       const bindingsStream = await myEngine.queryBindings(`SELECT ?o WHERE {
          ?s <http://www.w3.org/ns/pim/space#storage> ?o.
         }`, {
-        sources: [`${webID}`],
+        sources: [`${webID}`]
       });
-      const bindings = await bindingsStream.toArray();
+      const bindings = await bindingsStream.toArray()
   
-      const podUrl =bindings[0].get('o').value;
-  
-      const containerUri = podUrl+'public/todosnew/'
+      const podUrl = bindings[0].get('o').value
+      const containerUri = podUrl + 'public/todosnew/'
       console.log(containerUri)
-      const file=containerUri.split('Data')[0]+'todos.ttl';
+      const file = containerUri.split('Data')[0] + 'todos.ttl'
       console.log(file)
-      setFile(file)
-        
+      setFile(file)   
       const response = await fetch(file, {
         method: 'GET',
         headers: {'Content-Type': 'text/turtle'},
-        credentials: 'include',
-      });
+        credentials: 'include'
+      })
   
-      if (300<response.status&&response.status<500) {
+      if ( 300 < response.status && response.status < 500) {
         console.log('No place to store todos. Hence it will be created');
-        const query = ``;
+        const query = ``
   
         await fetch(file, {
           method: 'PUT',
           headers: {'Content-Type': 'text/turtle'},
           body: query,
-          credentials: 'include',
-        });
-     //Below is used when using inrupt libs   
+          credentials: 'include'
+        })
+     // Below is used when using inrupt libs   
     // getTodoListViaQuery(session)
     //   .then((todos: ITodo[]) => { console.log(todos) })
     //   .catch((reason: any) => console.log(reason))
@@ -82,7 +79,7 @@ const Login: React.FC = (): JSX.Element => {
     //   setTodos(list)
     //   // console.log(list)
     // })()
-  }})();
+  }})()
   }, [session, session.info.isLoggedIn])
 
   function validate(event: React.ChangeEvent<HTMLInputElement>): void {
