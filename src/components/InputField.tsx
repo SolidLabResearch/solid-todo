@@ -8,7 +8,7 @@ import { fetch } from '@inrupt/solid-client-authn-browser';
 //   setTodos: any
 // }
 
-const InputField = ({ todos, setTodos, file }: any) :JSX.Element => {
+const InputField = ({ todos, setTodos, file }: any):JSX.Element => {
   // const { session } = useSession()
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -19,7 +19,7 @@ const InputField = ({ todos, setTodos, file }: any) :JSX.Element => {
   // const TODO_VALUE = 'http://schema.org/TextDigitalDocument'
   // const TODO_PROPERTY = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type'
 
-  const addTodo = async (text: string) :Promise<any> => {
+  const addTodo = async (text: string):Promise<void> => {
     const query = `INSERT DATA {<TodoList> <TodoItem> <${text}>.}`
 
     const response = await fetch(file, {
@@ -27,7 +27,9 @@ const InputField = ({ todos, setTodos, file }: any) :JSX.Element => {
       headers: { 'Content-Type': 'application/sparql-update' },
       body: query
     })
-    if (300 < response.status && response.status < 600) {
+    const low = 300
+    const high = 600
+    if (low < response.status && response.status < high) {
       console.log(` Error code is ${response.status} `)
     }
 

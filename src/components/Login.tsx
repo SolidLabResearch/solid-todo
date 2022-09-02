@@ -31,7 +31,7 @@ const Login: React.FC = (): JSX.Element => {
   useEffect(() => {
     if (!session.info.isLoggedIn) return
 
-    (async () :Promise<any> => {   
+    (async ():Promise<void> => {
       const myEngine = new QueryEngine()
       const bindingsStream = await myEngine.queryBindings(`SELECT ?o WHERE {
          ?s <http://www.w3.org/ns/pim/space#storage> ?o.
@@ -41,7 +41,8 @@ const Login: React.FC = (): JSX.Element => {
       const bindings = await bindingsStream.toArray()
 
       const podUrl = bindings[0].get('o').value
-      const containerUri = podUrl + 'public/todosnew/'
+      const location ='public/todosnew/'
+      const containerUri = podUrl + location
       console.log(containerUri)
       const file = containerUri.split('Data')[0] + 'todos.ttl'
       console.log(file)
@@ -51,10 +52,11 @@ const Login: React.FC = (): JSX.Element => {
         headers: { 'Content-Type': 'text/turtle' },
         credentials: 'include'
       })
-
-      if (300 < response.status && response.status < 500) {
+      const low = 300
+      const high = 600
+      if (low < response.status && response.status < high) {
         console.log('No place to store todos. Hence it will be created')
-        const query = ``
+        const query = (``)
 
         await fetch(file, {
           method: 'PUT',
