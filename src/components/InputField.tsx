@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react'
 // import { useSession } from '@inrupt/solid-ui-react'
-import { fetch } from '@inrupt/solid-client-authn-browser';
+import { fetch } from '@inrupt/solid-client-authn-browser'
 // import { addDatetime, addStringNoLocale, addUrl, createThing, getSourceUrl, saveSolidDatasetAt, setThing } from '@inrupt/solid-client'
 
 // interface IInputFieldProps {
@@ -51,7 +51,7 @@ const InputField = ({ todos, setTodos, file }: any): JSX.Element => {
 
   function handleAdd(event: React.FormEvent<HTMLFormElement>): void {
     event.preventDefault()
-    addTodo(todo)
+    void addTodo(todo)
     setTodo('')
   }
 

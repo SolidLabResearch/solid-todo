@@ -31,7 +31,7 @@ const Login: React.FC = (): JSX.Element => {
   useEffect(() => {
     if (!session.info.isLoggedIn) return
 
-    (async (): Promise<void> => {
+    void (async () => {
       const myEngine = new QueryEngine()
       const bindingsStream = await myEngine.queryBindings(`SELECT ?o WHERE {
          ?s <http://www.w3.org/ns/pim/space#storage> ?o.
@@ -40,11 +40,11 @@ const Login: React.FC = (): JSX.Element => {
       })
       const bindings = await bindingsStream.toArray()
 
-      const podUrl = bindings[0].get('o').value
-      let location = 'public/todosnew/'
-      const containerUri = podUrl + location
+      const podUrl: any = bindings[0].get('o').value
+      // const location: any = 'public/todosnew/'
+      const containerUri: any = podUrl as string + ('public/todosnew/' as string)
       console.log(containerUri)
-      const file = containerUri.split('Data')[0] + 'todos.ttl'
+      const file: any = (containerUri.split('Data')[0] as string) + ('todos.ttl' as string)
       console.log(file)
       setFile(file)
       const response = await fetch(file, {
@@ -64,7 +64,7 @@ const Login: React.FC = (): JSX.Element => {
           body: query,
           credentials: 'include'
         })
-        // Below is used when using inrupt libs   
+        // Below is used when using inrupt libs
         // getTodoListViaQuery(session)
         //   .then((todos: ITodo[]) => { console.log(todos) })
         //   .catch((reason: any) => console.log(reason))
@@ -82,6 +82,7 @@ const Login: React.FC = (): JSX.Element => {
         //   // console.log(list)
         // })()
       }
+      return file
     })()
   }, [session, session.info.isLoggedIn])
 
