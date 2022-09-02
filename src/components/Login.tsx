@@ -42,7 +42,7 @@ const Login: React.FC = (): JSX.Element => {
 
       const podUrl: any = bindings[0].get('o').value
       // const location: any = 'public/todosnew/'
-      const containerUri: any = podUrl as string + ('public/todosnew/' as string)
+      const containerUri: any = podUrl as string + ('private/todosnew/' as string)
       console.log(containerUri)
       const file: any = (containerUri.split('Data')[0] as string) + ('todos.ttl' as string)
       console.log(file)
