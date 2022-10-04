@@ -59,11 +59,12 @@
   
   .todos__single {
     display: flex;
-    width: 29.5%;
+    width: 100%;
     border-radius: 5px;
     padding: 20px;
     margin-top: 15px;
     background-image: url("https://c.neh.tw/thumb/f/350/1c6369b62f0846058d07.jpg");
+    background-size: cover;
     transition: 0.2s;
   }
   
@@ -77,6 +78,7 @@
   }
   
   .todos__single--text {
+
     flex: 1;
     padding: 5px;
     border: none;
@@ -88,6 +90,7 @@
   }
   
   .icon {
+    display: inline-block;
     margin-left: 10px;
     font-size: 25px;
     cursor: pointer;

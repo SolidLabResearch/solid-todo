@@ -5,8 +5,11 @@ import { LoginButton, LogoutButton, Text, useSession, CombinedDataProvider } fro
 import { findOidcIssuer } from '../logic/query'
 // import { getOrCreateTodoList, getTodoListViaQuery } from '../logic/utils'
 import InputField from './InputField'
-import TodoList from './TodoList'
+// import TodoList from './TodoList'
 import { QueryEngine } from '@comunica/query-sparql'
+// import Storage from './Storage'
+import { TheArr } from '../logic/model'
+import { fetch } from '@inrupt/solid-client-authn-browser'
 
 const authOptions = {
   clientName: 'Solid Todo App'
@@ -25,8 +28,9 @@ const Login: React.FC = (): JSX.Element => {
 
   const [file, setFile] = useState('')
 
-  // const [todos, setTodos] = useState<ITodo[]>(new Array<ITodo>())
-  const [todos, setTodos] = useState<any>()
+  const [todos, setTodos] = useState<TheArr[]>([])
+
+  const [podUrl, setPodUrl] = useState('')
 
   useEffect(() => {
     if (!session.info.isLoggedIn) return
@@ -34,15 +38,17 @@ const Login: React.FC = (): JSX.Element => {
     void (async () => {
       const myEngine = new QueryEngine()
       const bindingsStream = await myEngine.queryBindings(`SELECT ?o WHERE {
-         ?s <http://www.w3.org/ns/pim/space#storage> ?o.
-        }`, {
+           ?s <http://www.w3.org/ns/pim/space#storage> ?o.
+          }`, {
         sources: [`${webID}`]
       })
       const bindings = await bindingsStream.toArray()
 
-      const podUrl: any = bindings[0].get('o').value
+      const podUrl1 = bindings[0].get('o').value
+      setPodUrl(podUrl1)
+      console.log(podUrl)
       // const location: any = 'public/todosnew/'
-      const containerUri: any = podUrl as string + ('private/todosnew/' as string)
+      const containerUri: any = podUrl1 as string + ('private/todosnew/' as string)
       console.log(containerUri)
       const file: any = (containerUri.split('Data')[0] as string) + ('todos.ttl' as string)
       console.log(file)
@@ -122,21 +128,23 @@ const Login: React.FC = (): JSX.Element => {
           datasetUrl={webID}
           thingUrl={webID}
         >
-          <div className='flex flex-row'>
-            <p className='mr-4'>You are logged in as:</p>
-            <Text properties={[
-              'http://www.w3.org/2006/vcard/ns#fn',
-              'http://xmlns.com/foaf/0.1/name'
-            ]} />
+          <div>
+            <div className='flex flex-row'>
+              <p className='mr-4'>You are logged in as:</p>
+              <Text properties={[
+                'http://www.w3.org/2006/vcard/ns#fn',
+                'http://xmlns.com/foaf/0.1/name'
+              ]} />
+            </div>
+
             <LogoutButton
               onError={function noRefCheck() {}}
               onLogout={function noRefCheck() {}}
             />
           </div>
-          <section>
-            <InputField todos={todos} setTodos={setTodos} file={file} />
-            <TodoList todos={todos} setTodos={setTodos} />
-          </section>
+
+          <InputField todos={todos} setTodos={setTodos} file={file} />
+
         </CombinedDataProvider>
       </div>
     )

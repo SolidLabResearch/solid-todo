@@ -2,7 +2,7 @@ import { Session } from '@inrupt/solid-client-authn-browser'
 import { QueryEngine } from '@comunica/query-sparql-link-traversal-solid'
 import { Bindings, BindingsStream, QueryStringContext } from '@comunica/types'
 import { Quad, Term, NamedNode, Literal } from 'n3'
-import { ITodo } from './model'
+import { Todo } from './model'
 
 const engine: QueryEngine = new QueryEngine()
 const sessionKey: string = '@comunica/actor-http-inrupt-solid-client-authn:session'
@@ -36,8 +36,8 @@ async function execute(query: string, initialDocument: string, session: Session 
   })
 }
 
-async function findTaskEntries(session: Session): Promise<ITodo[]> {
-  return await new Promise<ITodo[]>((resolve, reject) => {
+async function findTaskEntries(session: Session): Promise<Todo[]> {
+  return await new Promise<Todo[]>((resolve, reject) => {
     const taskData: Map<NamedNode, Quad[]> = new Map<NamedNode, Quad[]>()
     const taskQuery: string = `
       PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -57,7 +57,7 @@ async function findTaskEntries(session: Session): Promise<ITodo[]> {
     })
       .catch((reason: any) => reject(reason))
       .then(() => {
-        const taskList: ITodo[] = new Array<ITodo>()
+        const taskList: Todo[] = new Array<Todo>()
         let index: number = 0
         for (const quads of taskData.values()) {
           taskList.push({
