@@ -1,0 +1,74 @@
+@prefix sodo: <http://sodo-example.com/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix schema: <https://schema.org/> .
+
+sodo:Entity
+    a rdfs:Class;
+    rdfs:comment "An entity in the context of sodo ontology";
+    rdfs:label "Sodo Entity";
+
+sodo:Tasklist
+    rdfs:subClassOf sodo:Entity;
+    rdfs:comment "List consisting of tasks";
+    rdfs:label "Tasklist" .
+
+sodo:Task
+    rdfs:subClassOf sodo:Entity;
+    rdfs:comment "A Task";
+    rdfs:label "Task" .
+
+sodo:createdBy
+    a rdf:Property;
+    rdfs:comment "Indicates the Person who created the task.";
+    rdfs:label "createdBy";
+    rdfs:domain sodo:Task;
+    rdfs:range rdfs:URL .
+
+sodo:belongsTo
+    a rdf:Property;
+    rdfs:comment "Indicates a task belonging to a tasklist.";
+    rdfs:label "belongsTo";
+    rdfs:domain sodo:Tasklist;
+    rdfs:range sodo:Task .
+
+sodo:dateCreated
+    a rdf:Property;
+    owl:equivalentProperty schema:dateCreated;
+    rdfs:comment "Indicates the creation date of a task.";
+    rdfs:label "dateCreated";
+    rdfs:domain sodo:Task;
+    rdfs:range rdfs:xsd:dateTime .
+
+sodo:dateModified
+    a rdf:Property;
+    owl:equivalentProperty schema:dateModified;
+    rdfs:comment "Indicates the modification date of a task.";
+    rdfs:label "dateModified";
+    rdfs:domain sodo:Task;
+    rdfs:range rdfs:xsd:dateTime .
+
+sodo:status
+    a rdf:Property;
+    rdfs:comment "Indicates if a task is completed.";
+    rdfs:label "status";
+    rdfs:domain sodo:Task;
+    rdfs:range schema:Boolean . 
+    <!-- Is the range alright? -->
+
+sodo:name
+    a rdf:Property;
+    rdfs:comment "Indicates the name of the task.";
+    rdfs:label "name";
+    rdfs:domain sodo:Task;
+    rdfs:range rdfs:Literal .
+
+sodo:tasklistname
+    a rdf:Property;
+    rdfs:comment "Indicates the name of the tasklist.";
+    rdfs:label "tasklistname";
+    rdfs:domain sodo:Tasklist;
+    rdfs:range rdfs:Literal .
