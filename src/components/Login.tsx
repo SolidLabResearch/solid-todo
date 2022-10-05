@@ -44,15 +44,16 @@ const Login: React.FC = (): JSX.Element => {
       })
       const bindings = await bindingsStream.toArray()
 
-      const podUrl1 = bindings[0].get('o').value
+      const podUrl1 = bindings[0].get('o').value; // TODO: this will throw an error when `bindings` is empty. Make sure we catch this, and report this as a nice error to the user.
       setPodUrl(podUrl1)
       console.log(podUrl)
       // const location: any = 'public/todosnew/'
-      const containerUri: any = podUrl1 as string + ('private/todosnew/' as string)
+      const containerUri: any = podUrl1 as string + ('private/todosnew/' as string) // TODO: this will fail if pim:storage refers to a value that does not end with a `/`. We can fix this by delegating this operation to a lib such as `relative-to-absolute-iri`.
       console.log(containerUri)
-      const file: any = (containerUri.split('Data')[0] as string) + ('todos.ttl' as string)
+      const file: any = (containerUri.split('Data')[0] as string) + ('todos.ttl' as string) // TODO: Not sure I understand why this Data split is happening. In any case, let's use `relative-to-absolute-iri` here as well.
       console.log(file)
       setFile(file)
+      // TODO: The logic below for checking if a file exists, and creating one if not, should not be necessary anymore once using comunica for inserting data.
       const response = await fetch(file, {
         method: 'GET',
         headers: { 'Content-Type': 'text/turtle' },
@@ -109,9 +110,9 @@ const Login: React.FC = (): JSX.Element => {
       const webIdURL: URL = new URL(webIdInputValue)
       findOidcIssuer(webIdURL)
         .then((issuer: URL) => setOidcIssuer(issuer.href))
-        .catch((reason: any) => console.log(reason))
+        .catch((reason: any) => console.log(reason)) // TODO: let's use nice error dialogs instead of console.log statements :-)
     } catch (error: any) {
-      console.log(error)
+      console.log(error) // TODO: also here.
     }
   }
 
@@ -149,6 +150,7 @@ const Login: React.FC = (): JSX.Element => {
       </div>
     )
   } else {
+    // TODO: does this "providers" do anything? I don't see it anywhere in the UI. Should it be a dropdown?
     return (
       <div>
         <datalist id="providers">
