@@ -1,15 +1,18 @@
-import { QueryEngine } from '@comunica/query-sparql'
-import { fetch } from '@inrupt/solid-client-authn-browser'
+import { QueryEngine } from '@comunica/query-sparql-link-traversal-solid'
+import { Session } from '@inrupt/solid-client-authn-browser'
+
 import { useEffect, useState } from 'react'
 import { TheArr } from '../logic/model'
 import SingleTodo from './SingleTodo'
+import { QueryStringContext } from '@comunica/types'
+import { ActorHttpInruptSolidClientAuthn } from '@comunica/actor-http-inrupt-solid-client-authn'
 
 const TodoList: React.FC<{
   todos: TheArr[]
   setTodos: React.Dispatch<React.SetStateAction<TheArr[]>>
   file: string
-  name: string
-}> = ({ todos, setTodos, file, name }): any => {
+  session: Session
+}> = ({ todos, setTodos, file, session }): any => {
   const readArray: any[] = []
   const readArray1: any[] = []
   const readArray2: any[] = []
@@ -22,32 +25,23 @@ const TodoList: React.FC<{
   let boo: string
   let dateCreated: string
   const [TheArray, setTheArray] = useState<TheArr[]>([])
-  async function myfetchFunction(file): Promise<any> {
-    return await fetch(file, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/sparql-update',
-        'Cache-Control': 'no-cache'
-      }
-    })
-  }
 
   const display = async (): Promise<void> => {
     console.log('im in display')
     const myEngine = new QueryEngine()
-
+    const context: QueryStringContext = {
+      sources: [file],
+      lenient: true,
+      baseIRI: file,
+      [ActorHttpInruptSolidClientAuthn.CONTEXT_KEY_SESSION.name]: session
+    }
     const bindingsStream = await myEngine.queryBindings(`
         SELECT ?id ?todo ?status ?dateCreated WHERE {
          ?id <http://sodo-example.com/label> ?todo .
          ?id <http://sodo-example.com/status> ?status .  
          ?id  <http://sodo-example.com/dateCreated> ?dateCreated .
-        }`, {
-      sources: [`${file}`],
-      fetch: myfetchFunction
-
-    })
-
-    // await myEngine.invalidateHttpCache()
+        }`, context
+    )
 
     const bindings = await bindingsStream.toArray()
     bindings.forEach((element) => {
@@ -83,15 +77,13 @@ const TodoList: React.FC<{
   }
 
   useEffect(() => {
-    console.log('Im in useEffect')
     void display()
   }, [])
 
   const displaytodos = TheArray.map((entry) => {
     return (
       <div key={entry.id2}>
-        {/* <span className="todos__single--text"> {entry.text2}: {entry.id2}: {entry.boo2}</span> */}
-        <SingleTodo todo={entry} index={id1} todos={TheArray} setTodos={setTheArray} file={file} name={name}/>
+        <SingleTodo todo={entry} index={id1} todos={TheArray} setTodos={setTheArray} file={file} session={session}/>
       </div>
 
     )
@@ -99,20 +91,7 @@ const TodoList: React.FC<{
 
   return (
     <>
-
-      {/* <button
-  className="color bg p-2 rounded-md w-72"
-  type="button"
-  onClick={displaytodos()}
->
-  Show
-</button> */}
-      {/* {todos1} */}
       {displaytodos}
-      {/* <TodoList todos={todos} setTodos={setTodos} file={file} /> */}
-      {/* <ul>{displaytodos1}</ul> */}
-
-      {/* <SingleTodo todo={todos} todos={todos} setTodos={setTodos}/> */}
     </>
 
   )

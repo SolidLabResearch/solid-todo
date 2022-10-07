@@ -3,16 +3,9 @@ import { type TheArr } from '../logic/model'
 import { AiFillEdit, AiFillDelete } from 'react-icons/ai'
 import { MdDone } from 'react-icons/md'
 import './style.css'
-// import { QueryEngine } from '@comunica/query-sparql-link-traversal-solid'
-// import { useSession } from '@inrupt/solid-ui-react'
-import { fetch } from '@inrupt/solid-client-authn-browser'
-// import TodoList from './TodoList'
-
-// interface ISingleTodoProps {
-//   todo: ITodo
-//   todos: ITodo[]
-//   setTodos: React.Dispatch<React.SetStateAction<ITodo[]>>
-// }
+import { QueryEngine } from '@comunica/query-sparql-link-traversal-solid'
+import { QueryStringContext } from '@comunica/types'
+import { ActorHttpInruptSolidClientAuthn } from '@comunica/actor-http-inrupt-solid-client-authn'
 
 const SingleTodo: React.FC<{
   index: number
@@ -20,40 +13,38 @@ const SingleTodo: React.FC<{
   todos: TheArr[]
   setTodos: React.Dispatch<React.SetStateAction<TheArr[]>>
   file: string
-  name: string
-}> = ({ index, todo, todos, setTodos, file, name }): any => {
-  // console.log(todo)
-  // console.log(todo.text2)
-  // console.log(id)
-  // console.log(isDone)
-  // console.log(todos)
-  // console.log(file)
+  session: any
+}> = ({ index, todo, todos, setTodos, file, session }): any => {
   const [edit, setEdit] = useState<boolean>(false)
   const [editTodo, setEditTodo] = useState<string>('')
-  // const [newValue, setNewValue] = useState(todo.boo2)
-  console.log(todos)
   const inputRef = useRef<HTMLInputElement>(null)
   useEffect(() => {
     inputRef.current?.focus()
   }, [edit])
+  const myEngine = new QueryEngine()
+  const context: QueryStringContext = {
+    sources: [file],
+    lenient: true,
+    baseIRI: file
+  }
+  context[ActorHttpInruptSolidClientAuthn.CONTEXT_KEY_SESSION.name] = session
 
-  const deleteTodo = async (id2): Promise<void> => {
+  const deleteTodo = async (id2): Promise<any> => {
     console.log(id2)
 
     setTodos(todos.filter((todo) => todo.id2 !== id2))
-    // console.log(todos)
 
     if (todo.id2 === id2) console.log(todo.text2, todo.id2, todo.boo2)
 
     console.log('Deleting todos')
     const queryBoo: string = todo.boo2 as unknown as string
-    const query = `DELETE DATA {<${todo.id2}> <http://sodo-example.com/label> "${todo.text2}"; <http://sodo-example.com/status> "${queryBoo}"; <http://sodo-example.com/dateCreated> "${todo.dateCreated}".}`
-    await fetch(file, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/sparql-update' },
-      body: query,
-      credentials: 'include'
-    })
+    await myEngine.queryVoid(`
+    PREFIX tod: <>
+      PREFIX tur: <http://www.w3.org/ns/iana/media-types/text/turtle#>
+      PREFIX sodo: <http://sodo-example.com/>
+      PREFIX ex: <http://www.example.com/> 
+
+      DELETE DATA {<${todo.id2}> <http://sodo-example.com/label> "${todo.text2}"; <http://sodo-example.com/status> "${queryBoo}"; <http://sodo-example.com/dateCreated> "${todo.dateCreated}".}`, context)
   }
 
   const editTheTodo = async (e: React.FormEvent, id2: number): Promise<any> => {
@@ -62,20 +53,16 @@ const SingleTodo: React.FC<{
       todos.map((todo) => (todo.id2 === id2 ? { ...todo, todo: editTodo } : todo))
     )
     console.log(editTodo)
-
-    // setTodo([editTodo, todo.id2, todo.boo2])
+    const createdDate: string = new Date(Date.now()) as unknown as string
     setEdit(false)
-    const queryBoo: string = todo.boo2 as unknown as string
-    const query = `DELETE DATA {<${todo.id2}> <http://sodo-example.com/label> "${todo.text2}";  <http://sodo-example.com/status> "${queryBoo}".} 
-                    INSERT DATA {<${todo.id2}> <http://sodo-example.com/label> "${editTodo}"; <http://sodo-example.com/status> "${queryBoo}".}
-                    WHERE  {<${todo.id2}> <http://sodo-example.com/label> "${todo.text2}".}`
-    // const query = `DELETE DATA {<${todo.text2}>}`
-    await fetch(file, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/sparql-update' },
-      body: query,
-      credentials: 'include'
-    })
+    await myEngine.queryVoid(`
+    PREFIX tod: <>
+      PREFIX tur: <http://www.w3.org/ns/iana/media-types/text/turtle#>
+      PREFIX sodo: <http://sodo-example.com/>
+      PREFIX ex: <http://www.example.com/> 
+      DELETE {<${todo.id2}> <http://sodo-example.com/label> "${todo.text2}".}
+      INSERT {<${todo.id2}> <http://sodo-example.com/label> "${editTodo}"; <http://sodo-example.com/dateModified> "${createdDate}".}
+      WHERE  {<${todo.id2}> <http://sodo-example.com/label> "${todo.text2}".}`, context)
   }
 
   const doneTodo = async (id2): Promise<void> => {
@@ -85,27 +72,24 @@ const SingleTodo: React.FC<{
       )
     )
     const queryBoo: string = todo.boo2 as unknown as string
-    let queryBooNew: string
-    queryBoo === 'true' ? queryBooNew = 'false' : queryBooNew = 'true'
-    // const notQueryBoo: string = !todo.boo2.valueOf as unknown as string
-    const query = `DELETE DATA {<${todo.id2}> <http://sodo-example.com/label> "${todo.text2}";  <http://sodo-example.com/status> "${queryBoo}".}
-                    INSERT DATA {<${todo.id2}> <http://sodo-example.com/label> "${todo.text2}"; <http://sodo-example.com/status> "${queryBooNew}".}
-                    WHERE  {<${todo.id2}> <http://sodo-example.com/label> "${todo.text2}".}`
-    // const query = `DELETE DATA {<${todo.text2}>}`
-    await fetch(file, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/sparql-update' },
-      body: query,
-      credentials: 'include'
-    })
-  }
-
-  function handleDelete(id2): any {
-    void deleteTodo(id2)
+    const queryBooNew: string = !todo.boo2 as unknown as string
+    await myEngine.queryVoid(`
+    PREFIX tod: <>
+      PREFIX tur: <http://www.w3.org/ns/iana/media-types/text/turtle#>
+      PREFIX sodo: <http://sodo-example.com/>
+      PREFIX ex: <http://www.example.com/> 
+      
+      DELETE {<${todo.id2}> <http://sodo-example.com/status> "${queryBoo}".}
+                    INSERT {<${todo.id2}> <http://sodo-example.com/status> "${queryBooNew}".}
+                    WHERE  {<${todo.id2}> <http://sodo-example.com/label> "${todo.text2}".}`, context)
   }
 
   function handleEdit(e, id2): any {
     void editTheTodo(e, id2)
+  }
+
+  function handleDelete(id2): any {
+    void deleteTodo(id2)
   }
 
   function handleDone(id2): any {
