@@ -5,7 +5,7 @@ interface Todo {
   iri?: URL
 }
 
-interface TheArr {
+interface TheArr { // TODO: what does this interface mean? Can the name and fields be renamed to something more descriptive?
   id2: number
   text2: string
   boo2: boolean

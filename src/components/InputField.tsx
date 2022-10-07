@@ -38,6 +38,7 @@ const InputField = ({ todos, setTodos, file }: any): any => {
     const createdDate: string = new Date(Date.now()) as unknown as string
     const status: string = 'false'
 
+    // TODO: in the query below, we have quite a bit of unused prefixes. Let's remove the unused ones.
     const query1 = `INSERT DATA {
     
     @prefix tod: <>.
@@ -69,6 +70,7 @@ const InputField = ({ todos, setTodos, file }: any): any => {
     //   body: body
     // })
 
+    // TODO: We're doing updates with a direct HTTP request here. Can we use Comunica for this instead?
     const response = await fetch(file, {
       method: 'POST',
       headers: { 'Content-Type': 'application/sparql-update' },

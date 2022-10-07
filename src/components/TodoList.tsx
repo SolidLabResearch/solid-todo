@@ -1,4 +1,4 @@
-import { QueryEngine } from '@comunica/query-sparql'
+import { QueryEngine } from '@comunica/query-sparql' // TODO: should be '@comunica/query-sparql-link-traversal-solid'?
 import { fetch } from '@inrupt/solid-client-authn-browser'
 import { useEffect, useState } from 'react'
 import { TheArr } from '../logic/model'
@@ -43,7 +43,7 @@ const TodoList: React.FC<{
          ?id  <http://sodo-example.com/dateCreated> ?dateCreated .
         }`, {
       sources: [`${file}`],
-      fetch: myfetchFunction
+      fetch: myfetchFunction // TODO: why are you overriding this? I guess we should just pass the Solid session instead? (ask Jonni on how to do this)
 
     })
 
@@ -51,6 +51,7 @@ const TodoList: React.FC<{
 
     const bindings = await bindingsStream.toArray()
     bindings.forEach((element) => {
+      // TODO: It looks like you're doing a lot of URL manipulation here, which is not considered good practise. Can we do it in another way?
       id = element.get('id').value
       id1 = id.split('/').pop()
       id2 = id1

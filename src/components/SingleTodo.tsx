@@ -37,6 +37,7 @@ const SingleTodo: React.FC<{
     inputRef.current?.focus()
   }, [edit])
 
+  // TODO: There's quite a bit of code duplication in the functions below. Can we abstract things a bit? (should become easier once we use comunica)
   const deleteTodo = async (id2): Promise<void> => {
     console.log(id2)
 
@@ -47,6 +48,7 @@ const SingleTodo: React.FC<{
 
     console.log('Deleting todos')
     const queryBoo: string = todo.boo2 as unknown as string
+    // TODO: Let's use comunica to do this as well.
     const query = `DELETE DATA {<${todo.id2}> <http://sodo-example.com/label> "${todo.text2}"; <http://sodo-example.com/status> "${queryBoo}"; <http://sodo-example.com/dateCreated> "${todo.dateCreated}".}`
     await fetch(file, {
       method: 'PATCH',
@@ -65,6 +67,7 @@ const SingleTodo: React.FC<{
 
     // setTodo([editTodo, todo.id2, todo.boo2])
     setEdit(false)
+    // TODO: also use comunica here
     const queryBoo: string = todo.boo2 as unknown as string
     const query = `DELETE DATA {<${todo.id2}> <http://sodo-example.com/label> "${todo.text2}";  <http://sodo-example.com/status> "${queryBoo}".} 
                     INSERT DATA {<${todo.id2}> <http://sodo-example.com/label> "${editTodo}"; <http://sodo-example.com/status> "${queryBoo}".}
@@ -86,6 +89,7 @@ const SingleTodo: React.FC<{
     )
     const queryBoo: string = todo.boo2 as unknown as string
     let queryBooNew: string
+    // TODO: also use comunica here
     queryBoo === 'true' ? queryBooNew = 'false' : queryBooNew = 'true'
     // const notQueryBoo: string = !todo.boo2.valueOf as unknown as string
     const query = `DELETE DATA {<${todo.id2}> <http://sodo-example.com/label> "${todo.text2}";  <http://sodo-example.com/status> "${queryBoo}".}
