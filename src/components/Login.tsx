@@ -1,21 +1,14 @@
 import { useEffect, useState } from 'react'
 import { LoginButton, LogoutButton, Text, useSession, CombinedDataProvider } from '@inrupt/solid-ui-react'
-// import { getSolidDataset, getUrlAll, getThing } from '@inrupt/solid-client'
-// import { ITodo } from '../logic/model'
 import { findOidcIssuer } from '../logic/query'
-// import { getOrCreateTodoList, getTodoListViaQuery } from '../logic/utils'
 import InputField from './InputField'
-// import TodoList from './TodoList'
 import { QueryEngine } from '@comunica/query-sparql'
-// import Storage from './Storage'
 import { TheArr } from '../logic/model'
-import { fetch } from '@inrupt/solid-client-authn-browser'
+import TodoList from './TodoList'
 
 const authOptions = {
   clientName: 'Solid Todo App'
 }
-
-// const STORAGE_PREDICATE = 'http://www.w3.org/ns/pim/space#storage'
 
 const keywordToProviderMap: Map<string, string> = new Map<string, string>([
   ['solidcommunity', 'https://solidcommunity.net/'],
@@ -31,7 +24,6 @@ const Login: React.FC = (): JSX.Element => {
   const [todos, setTodos] = useState<TheArr[]>([])
 
   const [podUrl, setPodUrl] = useState('')
-
   useEffect(() => {
     if (!session.info.isLoggedIn) return
 
@@ -40,7 +32,7 @@ const Login: React.FC = (): JSX.Element => {
       const bindingsStream = await myEngine.queryBindings(`SELECT ?o WHERE {
            ?s <http://www.w3.org/ns/pim/space#storage> ?o.
           }`, {
-        sources: [`${webID}`]
+        sources: [`${session.info.webId as string}`]
       })
       const bindings = await bindingsStream.toArray()
 
@@ -51,43 +43,9 @@ const Login: React.FC = (): JSX.Element => {
       const containerUri: any = podUrl1 as string + ('private/todosnew/' as string)
       console.log(containerUri)
       const file: any = (containerUri.split('Data')[0] as string) + ('todos.ttl' as string)
+      // const file: any = (containerUri.split('Data')[0] as string)
       console.log(file)
       setFile(file)
-      const response = await fetch(file, {
-        method: 'GET',
-        headers: { 'Content-Type': 'text/turtle' },
-        credentials: 'include'
-      })
-      const low = 300
-      const high = 600
-      if (low < response.status && response.status < high) {
-        console.log('No place to store todos. Hence it will be created')
-        const query = ''
-
-        await fetch(file, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'text/turtle' },
-          body: query,
-          credentials: 'include'
-        })
-        // Below is used when using inrupt libs
-        // getTodoListViaQuery(session)
-        //   .then((todos: ITodo[]) => { console.log(todos) })
-        //   .catch((reason: any) => console.log(reason))
-        // void (async () => {
-        //   const profileDataset = await getSolidDataset(session.info.webId as any, {
-        //     fetch: session.fetch as any
-        //   })
-        //   const profileThing = getThing(profileDataset, session.info.webId as any)
-        //   const podsUrls = getUrlAll(profileThing as any, STORAGE_PREDICATE)
-        //   console.log(podsUrls)
-        //   const pod = podsUrls[0]
-        //   const containerUri = `${pod}todos/`
-        //   const list = await getOrCreateTodoList(containerUri, session.fetch)
-        //   setTodos(list)
-        //   // console.log(list)
-        // })()
-      }
       return file
     })()
   }, [session, session.info.isLoggedIn])
@@ -142,8 +100,8 @@ const Login: React.FC = (): JSX.Element => {
               onLogout={function noRefCheck() {}}
             />
           </div>
-
-          <InputField todos={todos} setTodos={setTodos} file={file} />
+          <InputField todos={todos} setTodos={setTodos} file={file} session={session}/>
+          <TodoList todos={todos} setTodos={setTodos} file={file} session={session} />
 
         </CombinedDataProvider>
       </div>
