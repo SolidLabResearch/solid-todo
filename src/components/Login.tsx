@@ -15,10 +15,9 @@ const authOptions = {
 };
 
 const Login = (props): JSX.Element => {
-  const { session } = useSession();
   const [oidcIssuer, setOidcIssuer] = useState("https://solidcommunity.net"); // TODO: change for release again
   useEffect(() => {
-    if (!session.info.isLoggedIn) return;
+    if (!props.session.info.isLoggedIn) return;
 
     void (async () => {
       const myEngine = new QueryEngine();
@@ -27,30 +26,31 @@ const Login = (props): JSX.Element => {
            ?s <http://www.w3.org/ns/pim/space#storage> ?o.
           }`,
         {
-          sources: [`${session.info.webId as string}`],
+          sources: [`${props.session.info.webId as string}`],
         }
       );
       const bindings = await bindingsStream.toArray();
 
       const podUrl = bindings[0].get("o").value;
-		console.log('Login.tsx :: podUrl is ' + podUrl);
+      console.log("Login.tsx :: podUrl is " + podUrl);
       props.setPodUrl(podUrl);
 
       const containerUri: any =
         (podUrl as string) + ("private/todosnew/" as string);
-      console.log('Login.tsx :: containerUri is ' + containerUri);
+      console.log("Login.tsx :: containerUri is " + containerUri);
 
       const file: any =
         (containerUri.split("Data")[0] as string) + ("todos.ttl" as string);
-		// const file: any = (containerUri.split('Data')[0] as string)
-		console.log('Login.tsx :: file is ' + file);
-		props.setFile(file);
+      // const file: any = (containerUri.split('Data')[0] as string)
+      console.log("Login.tsx :: file is " + file);
+      props.setFile(file);
 
-      //return file; // QUESTION? Why return this?
+      //return file; // QUESTION? Why return this? Doesn't useEffect only run cleanup _functions_?
+
+      props.setWebId(props.session.info.webId ?? oidcIssuer);
+
     })();
-  }, [session, session.info.isLoggedIn]);
-
-  const webID = session.info.webId ?? oidcIssuer;
+  }, [props.session, props.session.info.isLoggedIn]); // only re-run the effect of session/loggedIn changes
 
   return (
     <div>
