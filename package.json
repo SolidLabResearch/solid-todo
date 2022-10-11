@@ -14,7 +14,8 @@
   "scripts": {
     "start": "webpack serve --mode=development --open --hot",
     "build": "webpack --mode=production",
-    "lint": "eslint . --max-warnings 0"
+    "lint-no-warn": "eslint . --max-warnings 0",
+    "lint": "eslint . --ext .ts --cache"
   },
   "dependencies": {
     "@comunica/query-sparql-link-traversal-solid": "^0.0.2-alpha.6.0",
@@ -29,17 +30,24 @@
     "react-router-dom": "^6.4.1"
   },
   "devDependencies": {
+    "@rubensworks/eslint-config": "^1.0.1",
     "@types/react": "^18.0.15",
     "@types/react-dom": "^18.0.6",
     "@types/react-router-dom": "^5.3.3",
-    "@typescript-eslint/eslint-plugin": "^5.33.1",
+    "@typescript-eslint/eslint-plugin": "^5.40.0",
+    "@typescript-eslint/parser": "^5.40.0",
     "css-loader": "^6.7.1",
-    "eslint": "^8.22.0",
+    "eslint": "^8.25.0",
+    "eslint-config-es": "^4.2.0",
     "eslint-config-standard-with-typescript": "^22.0.0",
+    "eslint-import-resolver-typescript": "^3.5.1",
     "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-jest": "^27.1.1",
     "eslint-plugin-n": "^15.2.5",
     "eslint-plugin-promise": "^6.0.0",
     "eslint-plugin-react": "^7.30.1",
+    "eslint-plugin-tsdoc": "^0.2.17",
+    "eslint-plugin-unused-imports": "^2.0.0",
     "html-webpack-plugin": "^5.5.0",
     "node-polyfill-webpack-plugin": "^2.0.1",
     "postcss-loader": "^7.0.1",
