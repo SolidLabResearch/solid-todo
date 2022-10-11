@@ -11,7 +11,10 @@ interface IAppProps {
 
 const App : React.FC = () => {
   const [loggedIn, setLoggedIn] = useState(false);
-  return loggedIn ? <TaskList /> : <Login />;
+  const [file, setFile] = useState("");
+  const [podUrl, setPodUrl] = useState("");
+
+	return loggedIn ? <TaskList /> : <Login setFile ={setFile} setPodUrl={setPodUrl} />;
 };
 
 export default App;

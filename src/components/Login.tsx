@@ -16,11 +16,7 @@ const authOptions = {
 
 const Login = (props): JSX.Element => {
   const { session } = useSession();
-  const [oidcIssuer, setOidcIssuer] = useState("http://localhost:3000");
-
-  const [file, setFile] = useState("");
-
-  const [podUrl, setPodUrl] = useState("");
+  const [oidcIssuer, setOidcIssuer] = useState("https://solidcommunity.net"); // TODO: change for release again
   useEffect(() => {
     if (!session.info.isLoggedIn) return;
 
@@ -36,19 +32,21 @@ const Login = (props): JSX.Element => {
       );
       const bindings = await bindingsStream.toArray();
 
-      const podUrl1 = bindings[0].get("o").value;
-      setPodUrl(podUrl1);
-      console.log(podUrl);
-      // const location: any = 'public/todosnew/'
+      const podUrl = bindings[0].get("o").value;
+		console.log('Login.tsx :: podUrl is ' + podUrl);
+      props.setPodUrl(podUrl);
+
       const containerUri: any =
-        (podUrl1 as string) + ("private/todosnew/" as string);
-      console.log(containerUri);
+        (podUrl as string) + ("private/todosnew/" as string);
+      console.log('Login.tsx :: containerUri is ' + containerUri);
+
       const file: any =
         (containerUri.split("Data")[0] as string) + ("todos.ttl" as string);
-      // const file: any = (containerUri.split('Data')[0] as string)
-      console.log(file);
-      setFile(file);
-      return file;
+		// const file: any = (containerUri.split('Data')[0] as string)
+		console.log('Login.tsx :: file is ' + file);
+		props.setFile(file);
+
+      //return file; // QUESTION? Why return this?
     })();
   }, [session, session.info.isLoggedIn]);
 
