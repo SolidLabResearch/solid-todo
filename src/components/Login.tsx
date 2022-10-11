@@ -7,9 +7,6 @@ import {
   CombinedDataProvider,
 } from "@inrupt/solid-ui-react";
 import { QueryEngine } from "@comunica/query-sparql";
-import { TheArr } from "../logic/model";
-import TodoList from "./TodoList";
-import InputField from "./InputField";
 import WebIdLogin from "./WebIdLogin";
 import IdentityProviderLogin from "./IdentityProviderLogin";
 
@@ -18,12 +15,10 @@ const authOptions = {
 };
 
 const Login = (props): JSX.Element => {
-	const { session } = useSession();
+  const { session } = useSession();
   const [oidcIssuer, setOidcIssuer] = useState("http://localhost:3000");
 
   const [file, setFile] = useState("");
-
-  const [todos, setTodos] = useState<TheArr[]>([]);
 
   const [podUrl, setPodUrl] = useState("");
   useEffect(() => {
@@ -59,20 +54,23 @@ const Login = (props): JSX.Element => {
 
   const webID = session.info.webId ?? oidcIssuer;
 
-    return (
-      <div>
-        <div className="grid grid-cols-3 gap-2">
-          <p className="col-span-3">You are not logged in.</p>
-			 <WebIdLogin oidcIssuer={oidcIssuer} setOidcIssuer={setOidcIssuer}/>
-			 <IdentityProviderLogin oidcIssuer={oidcIssuer} setOidcIssuer={setOidcIssuer}/>
-          <LoginButton
-            oidcIssuer={oidcIssuer}
-            redirectUrl={window.location.href}
-            authOptions={authOptions}
-          />
-        </div>
+  return (
+    <div>
+      <div className="grid grid-cols-3 gap-2">
+        <p className="col-span-3">You are not logged in.</p>
+        <WebIdLogin oidcIssuer={oidcIssuer} setOidcIssuer={setOidcIssuer} />
+        <IdentityProviderLogin
+          oidcIssuer={oidcIssuer}
+          setOidcIssuer={setOidcIssuer}
+        />
+        <LoginButton
+          oidcIssuer={oidcIssuer}
+          redirectUrl={window.location.href}
+          authOptions={authOptions}
+        />
       </div>
-    );
-  }
+    </div>
+  );
+};
 
 export default Login;
