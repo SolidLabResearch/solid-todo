@@ -19,8 +19,6 @@
   },
   "dependencies": {
     "@comunica/query-sparql-link-traversal-solid": "^0.0.2-alpha.6.0",
-    "@inrupt/solid-client": "^1.23.1",
-    "@inrupt/solid-client-authn-browser": "^1.12.2",
     "@inrupt/solid-ui-react": "^2.8.0",
     "@inrupt/vocab-common-rdf": "^1.0.5",
     "@react-navigation/native": "^6.0.13",
@@ -30,6 +28,8 @@
     "react-router-dom": "^6.4.1"
   },
   "devDependencies": {
+    "@inrupt/solid-client": "^1.23.3",
+    "@inrupt/solid-client-authn-browser": "^1.12.2",
     "@rubensworks/eslint-config": "^1.0.1",
     "@types/react": "^18.0.15",
     "@types/react-dom": "^18.0.6",
@@ -41,6 +41,7 @@
     "eslint-config-es": "^4.2.0",
     "eslint-config-standard-with-typescript": "^22.0.0",
     "eslint-import-resolver-typescript": "^3.5.1",
+    "eslint-plugin-eslint-comments": "^3.2.0",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-jest": "^27.1.1",
     "eslint-plugin-n": "^15.2.5",
