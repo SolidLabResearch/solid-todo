@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { TheArr } from "../logic/model";
+import { Task } from "../logic/model";
 import TodoList from "./TodoList";
 import InputField from "./InputField";
 
 const TaskList = (props) => {
-  const [todos, setTodos] = useState<TheArr[]>([]);
+  const [todos, setTodos] = useState<Task[]>([]);
 
   return (
     <div>

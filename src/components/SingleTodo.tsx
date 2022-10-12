@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { type TheArr } from '../logic/model'
+import { type Task } from '../logic/model'
 import { AiFillEdit, AiFillDelete } from 'react-icons/ai'
 import { MdDone } from 'react-icons/md'
 import './style.css'
@@ -9,9 +9,9 @@ import { ActorHttpInruptSolidClientAuthn } from '@comunica/actor-http-inrupt-sol
 
 const SingleTodo: React.FC<{
   index: number
-  todo: TheArr
-  todos: TheArr[]
-  setTodos: React.Dispatch<React.SetStateAction<TheArr[]>>
+  todo: Task
+  todos: Task[]
+  setTodos: React.Dispatch<React.SetStateAction<Task[]>>
   file: string
   session: any
 }> = ({ index, todo, todos, setTodos, file, session }): any => {

@@ -2,17 +2,13 @@ import { QueryEngine } from '@comunica/query-sparql-link-traversal-solid'
 import { Session } from '@inrupt/solid-client-authn-browser'
 
 import { useEffect, useState } from 'react'
-import { Tasks } from '../logic/model'
+import { Task } from '../logic/model'
 import SingleTodo from './SingleTodo'
 import { QueryStringContext } from '@comunica/types'
 import { ActorHttpInruptSolidClientAuthn } from '@comunica/actor-http-inrupt-solid-client-authn'
 
-const TodoList: React.FC<{
-  todos: Tasks[]
-  setTodos: React.Dispatch<React.SetStateAction<Tasks[]>>
-  file: string
-  session: Session
-}> = ({ todos, setTodos, file, session }): any => {
+const TodoList = (props) => {
+
   const readArray: any[] = []
   const readArray1: any[] = []
   const readArray2: any[] = []
@@ -24,16 +20,17 @@ const TodoList: React.FC<{
   let id2: any
   let boo: string
   let dateCreated: string
-  const [TheArray, setTheArray] = useState<Tasks[]>([])
+
+  const [tasks, setTasks] = useState<Task[]>([])
 
   const display = async (): Promise<void> => {
     console.log('im in display')
     const myEngine = new QueryEngine()
     const context: QueryStringContext = {
-      sources: [file],
+      sources: [props.file],
       lenient: true,
-      baseIRI: file,
-      [ActorHttpInruptSolidClientAuthn.CONTEXT_KEY_SESSION.name]: session
+      baseIRI: props.file,
+      [ActorHttpInruptSolidClientAuthn.CONTEXT_KEY_SESSION.name]: props.session
     }
     const bindingsStream = await myEngine.queryBindings(`
         SELECT ?id ?todo ?status ?dateCreated WHERE {
@@ -69,7 +66,7 @@ const TodoList: React.FC<{
       //  setTheArray(TheArray => TheArray.append(text2))
       //  console.log(TheArray1)
       //  setTheArray(readArray =>  [...readArray,text2])
-      setTheArray([...TheArray, ...readArray2])
+      setTasks([...tasks, ...readArray2])
       // myEngine.invalidateHttpCache(id2, text2)
 
       //  setTheArray( [...TheArray, {text2, id2, boo2}])
@@ -80,10 +77,10 @@ const TodoList: React.FC<{
     void display()
   }, [])
 
-  const displaytodos = TheArray.map((entry) => {
+  const displaytodos = tasks.map((entry) => {
     return (
       <div key={entry.id2}>
-        <SingleTodo todo={entry} index={id1} todos={TheArray} setTodos={setTheArray} file={file} session={session}/>
+        <SingleTodo todo={entry} index={id1} todos={tasks} setTodos={setTasks} file={props.file} session={props.session}/>
       </div>
 
     )
