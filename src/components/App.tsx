@@ -1,8 +1,6 @@
 import React from "react";
 import { useEffect, useState } from "react";
-import { UrlString } from "@inrupt/solid-client";
-import { Session } from "@inrupt/solid-client-authn-browser";
-import { useSession } from "@inrupt/solid-ui-react";
+import { useSession, CombinedDataProvider } from "@inrupt/solid-ui-react";
 import Login from "./Login";
 import TaskList from "./TaskList";
 import { queryPodUrl } from "../logic/query";
@@ -15,9 +13,11 @@ import { queryPodUrl } from "../logic/query";
 
 const App = () => {
   const [file, setFile] = useState<string>("");
-  const [webId, setWebId] = useState<URL>(new URL("https://example.org/webID"));
+  const [webId, setWebId] = useState<URL>(
+    new URL("https://example.org/webID/")
+  );
   const { session } = useSession();
-  const [loggedIn, setLoggedIn ] = useState<boolean>(false)
+  const [loggedIn, setLoggedIn] = useState<boolean>(false);
 
   useEffect(() => {
     console.log("before useEffectHook: " + session.info.isLoggedIn);
@@ -41,7 +41,7 @@ const App = () => {
             (containerUri.split("Data")[0] as string) + ("todos.ttl" as string);
           console.log("file is " + file);
           setFile(file);
-			 setLoggedIn(true)
+          setLoggedIn(true);
         })
         .catch((reason: any) => console.log(reason));
       //return file; // QUESTION? Why return this? Doesn't useEffect only run cleanup _functions_?
@@ -50,7 +50,9 @@ const App = () => {
 
   return loggedIn ? (
     <React.StrictMode>
-      <TaskList webId={webId.href} file={file} session={session} />
+      <CombinedDataProvider datasetUrl={webId.href} thingUrl={webId.href}>
+        <TaskList webId={webId.href} file={file} session={session} />
+      </CombinedDataProvider>
     </React.StrictMode>
   ) : (
     <Login session={session} setWebId={setWebId} setFile={setFile} />
