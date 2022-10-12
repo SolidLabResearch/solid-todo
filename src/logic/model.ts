@@ -5,11 +5,11 @@ interface Todo {
   iri?: URL
 }
 
-interface TheArr {
+interface Tasks {
   id2: number
   text2: string
   boo2: boolean
   dateCreated: string
 }
 
-export { type Todo, type TheArr }
+export { type Todo, type Tasks }

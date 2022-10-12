@@ -2,14 +2,14 @@ import { QueryEngine } from '@comunica/query-sparql-link-traversal-solid'
 import { Session } from '@inrupt/solid-client-authn-browser'
 
 import { useEffect, useState } from 'react'
-import { TheArr } from '../logic/model'
+import { Tasks } from '../logic/model'
 import SingleTodo from './SingleTodo'
 import { QueryStringContext } from '@comunica/types'
 import { ActorHttpInruptSolidClientAuthn } from '@comunica/actor-http-inrupt-solid-client-authn'
 
 const TodoList: React.FC<{
-  todos: TheArr[]
-  setTodos: React.Dispatch<React.SetStateAction<TheArr[]>>
+  todos: Tasks[]
+  setTodos: React.Dispatch<React.SetStateAction<Tasks[]>>
   file: string
   session: Session
 }> = ({ todos, setTodos, file, session }): any => {
@@ -24,7 +24,7 @@ const TodoList: React.FC<{
   let id2: any
   let boo: string
   let dateCreated: string
-  const [TheArray, setTheArray] = useState<TheArr[]>([])
+  const [TheArray, setTheArray] = useState<Tasks[]>([])
 
   const display = async (): Promise<void> => {
     console.log('im in display')
