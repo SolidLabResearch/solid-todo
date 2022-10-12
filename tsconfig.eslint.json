@@ -4,7 +4,10 @@
     "index.ts",
     "lib/**/*.ts",
     "test/**/*.ts",
-    "bin/**/*.ts"
+    "bin/**/*.ts",
+
+    "src/**/*.ts",
+    "src/**/*.tsx"
   ],
   "exclude": [
     "**/node_modules"
