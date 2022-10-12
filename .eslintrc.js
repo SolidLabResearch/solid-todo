@@ -5,7 +5,10 @@ module.exports = {
     tsconfigRootDir: __dirname, // this is the reason this is a .js file
     project: ["./tsconfig.eslint.json"],
   },
-  extends: ["@rubensworks"],
+  extends: [
+    "@rubensworks",
+    //"plugin:unicorn/recommended"
+  ],
   plugins: ["react-hooks"],
   rules: {
     "no-implicit-coercion": "off",
