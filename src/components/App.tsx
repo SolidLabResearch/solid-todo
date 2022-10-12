@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useSession, CombinedDataProvider } from "@inrupt/solid-ui-react";
 import Login from "./Login";
 import TaskList from "./TaskList";
+import Header from "./Header";
 import { queryPodUrl } from "../logic/query";
 
 /**
@@ -50,8 +51,10 @@ const App = () => {
 
   return loggedIn ? (
     <React.StrictMode>
+		  {/* For some reason CombinedDataProvider _needs_ to be in this class and cant be put into TaskList.. Probably because of the Session and Async fetch? */}
       <CombinedDataProvider datasetUrl={webId.href} thingUrl={webId.href}>
-        <TaskList webId={webId.href} file={file} session={session} />
+		  <Header/>
+        <TaskList file={file} session={session} />
       </CombinedDataProvider>
     </React.StrictMode>
   ) : (
