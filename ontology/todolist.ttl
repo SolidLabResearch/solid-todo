@@ -1,0 +1,130 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix vann: <http://purl.org/vocab/vann/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix schema: <https://schema.org/> .
+@prefix ical: <https://www.w3.org/2002/12/cal/ical#> .
+
+# baseURI: http://example.org/todolist
+@prefix : <http://example.org/todolist/> .
+
+# ===============
+# Ontology
+# ===============
+
+: rdf:type owl:Ontology ;
+    dct:title "Todolist ontology" ;
+    dct:description """
+    The Todolist ontology aims at describing tasks, commonly refered to as 'todos' and 'todolists'.
+    """ ;
+    vann:preferredNamespacePrefix "todolist" ;
+    vann:preferredNamespaceURI <http://w3id.org/todolist/> .
+
+
+# ===============
+# Classes
+# ===============
+
+:Task a rdfs:Class ;
+    rdfs:label "Task" ;
+    rdfs:comment "A Task is 'something that needs to be done'. It is the base entity of this ontology. The term 'todo' would be equally fitting, but it is commonly used as a reserved term." ;
+	 owl:equivalentClass ical:Vtodo .
+
+:Tasklist a rdfs:Class ;
+    rdfs:label "Tasklist" ;
+    rdfs:comment "A collection of tasks. It can be empty if there have not yet been any tasks created. " .
+
+# TODO: Maybe also add 'List of Lists' or 'ListIndex' as Class?
+
+
+# ===============
+# Properties
+# ===============
+
+:title a rdf:Propery;
+	rdfs:label "title" ;
+	rdfs:comment "The title of a task or tasklist, which describes it in a short and concise form. This is often the minimum information that gets shown in the UI. More information should be added in the ':description'." ;
+	owl:equivalentProperty dct:title, ical:summary, schema:name ;
+	rdfs:domain :Task, :Tasklist .
+
+:description a rdf:Propery;
+	rdfs:label "description" ;
+	rdfs:comment "Additional information that goes beyond what ':title' conveys. Can also contain media, similar to a modern README." ;
+	owl:equivalentProperty dct:description, ical:description, schema:description ;
+	rdfs:domain :Task, :Tasklist .
+
+:createdBy a rdf:Property ;
+    rdfs:label "created by" ;
+    rdfs:comment "The person who created the task or tasklist." ;
+	 owl:equivalentProperty dct:creator, schema:creator  ;
+    rdfs:domain :Task, :Tasklist ;
+    rdfs:range foaf:Person . # TODO: could also be foaf:Organization
+
+:dateCreated a rdf:Property ;
+    rdfs:label "date created" ;
+    rdfs:comment "The date when the task or tasklist was created." ;
+	 owl:equivalentProperty dct:created, schema:dateCreated, ical:created;  # date vs dateTime?
+    rdfs:domain :Task, :Tasklist ;
+    rdfs:range xsd:dateTime . # this can be also used as task Id, depending of the time-stamp granularity
+
+:dateModified a rdf:Property ;
+    rdfs:label "date modified" ;
+    rdfs:comment "The date when the task or tasklist was last modified." ;
+	 owl:equivalentProperty dct:modified, schema:dateModified, ical:lastModified;
+    rdfs:domain :Task, :Tasklist ;
+    rdfs:range xsd:dateTime .
+
+# --------------
+# Task-only properties
+# --------------
+
+:dateCompleted a rdf:Property ;
+    rdfs:label "date completed" ;
+    rdfs:comment "The date when the task has been completed. Optional." ; # TODO: How to make this optional? Shapes?
+	 owl:equivalentProperty ical:completed ;
+    rdfs:domain :Task ;
+    rdfs:range xsd:dateTime .
+
+:status a rdf:Property ;
+    rdfs:label "status" ;
+    rdfs:comment "The status of the task. False if it still needs to be done, true if it is done." ;
+    owl:equivalentProperty ical:status ;
+    rdfs:domain :Task ;
+    rdfs:range xsd:boolean . # it might be possible that we have more states later (e.g. TODO, DONE, PENDING, BLOCKED, OBSOLETE, REVIEW, ARCHIVED, ..) ## TODO: How to do that in the ontology?
+
+:isPartOf a rdf:Property ;
+    rdfs:label "is part of" ;
+    rdfs:comment "The tasklist this task belongs to." ; # can a task be part of multiple lists?
+	 owl:equivalentProperty dct:isPartOf, schema:isPartOf ;
+    rdfs:domain :Task ;
+    rdfs:range :Tasklist .
+
+# --------------
+# Tasklist-only properties
+# --------------
+
+:hasTask a rdf:Property ;
+    rdfs:label "has Task" ;
+    rdfs:comment "Denotes a task that is part of this list." ;
+    owl:equivalentProperty dct:hasPart, schema:hasPart ;
+    rdfs:domain :Tasklist ;
+    rdfs:range :Task .
+
+
+# ===============
+# To be included (future work)
+# ===============
+#
+# - deadlines, repetetive and recurring tasks and other time/date wizardry
+# (see https://www.w3.org/2006/time# and https://raw.githubusercontent.com/w3c/sdw/gh-pages/time/rdf/time.ttl and https://raw.githubusercontent.com/w3c/sdw/gh-pages/time/rdf/time-gregorian.ttl)
+# - Assigning and sharing tasks
+# - List ACL: public lists?
+# - sub-tasks, task-dependencies
+# - mentions of persons, tags, keywords, ..
+# - priorities
+# - custom styling
+# - task result
+# - comments
