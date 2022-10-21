@@ -11,7 +11,7 @@ Todo application which saves the todos on your Solid-pod.
 1. Clone the repository.
 2. Install the Node dependencies
    ```
-   npm install
+   npm install --legacy-peer-deps
    ```
 3. Start the application
    ```

@@ -36,7 +36,14 @@ const Login: React.FC = (): JSX.Element => {
       })
       const bindings = await bindingsStream.toArray()
 
-      const podUrl1 = bindings[0].get('o').value
+      // By default, our base starts from the webId containing folder
+      // TODO make this better
+      let podUrl1 = (new URL('./', (session.info.webId as string))).toString()
+      try {
+        podUrl1 = bindings[0].get('o').value
+      } catch (e) {
+        // apparently we can't do that
+      }
       setPodUrl(podUrl1)
       console.log(podUrl)
       // const location: any = 'public/todosnew/'

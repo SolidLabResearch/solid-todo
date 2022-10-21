@@ -13,10 +13,9 @@ const InputField = ({ todos, setTodos, file, session }: any): any => {
     const context: QueryStringContext = {
       sources: [file],
       lenient: true,
-      baseIRI: file
+      baseIRI: file,
+      [ActorHttpInruptSolidClientAuthn.CONTEXT_KEY_SESSION.name]: session
     }
-    context[ActorHttpInruptSolidClientAuthn.CONTEXT_KEY_SESSION.name] = session
-    console.log(context)
     const id = Date.now()
     const createdDate: string = new Date(Date.now()) as unknown as string
     const status: string = 'false'
