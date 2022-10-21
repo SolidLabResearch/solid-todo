@@ -1,7 +1,7 @@
 import { QueryEngine } from '@comunica/query-sparql-link-traversal-solid'
 import { Session } from '@inrupt/solid-client-authn-browser'
 
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { TheArr } from '../logic/model'
 import SingleTodo from './SingleTodo'
 import { QueryStringContext } from '@comunica/types'
@@ -23,7 +23,6 @@ const TodoList: React.FC<{
   let id2: any
   let boo: string
   let dateCreated: string
-  const [TheArray, setTheArray] = useState<TheArr[]>([])
 
   const display = async (): Promise<void> => {
     console.log('im in display')
@@ -67,34 +66,26 @@ const TodoList: React.FC<{
       readArray1.push(id2)
       const newTodo: TheArr = { id2, text2, boo2, dateCreated }
       podTodos[id2] = newTodo
-      //  setTheArray(TheArray => TheArray.append(text2))
-      //  console.log(TheArray1)
-      //  setTheArray(readArray =>  [...readArray,text2])
     })
     // 3. update the current array with the pod todos.
     // I'm using a map to make sure I don't get duplicates
-    setTheArray(TheArray => {
-      let todoMap = {}
-      TheArray.forEach(todo => {
-        todoMap[todo.id2] = todo
-      })
-      todoMap = Object.assign(todoMap, podTodos)
-
-      return Object.values(todoMap)
-      // myEngine.invalidateHttpCache(id2, text2)
-
-      //  setTheArray( [...TheArray, {text2, id2, boo2}])
+    let todoMap = {}
+    todos.forEach(todo => {
+      todoMap[todo.id2] = todo
     })
+    todoMap = Object.assign(todoMap, podTodos)
+    setTodos(Object.values(todoMap))
+    // myEngine.invalidateHttpCache(id2, text2)
   }
 
   useEffect(() => {
     void display()
   }, [])
 
-  const displaytodos = TheArray.map((entry) => {
+  const displaytodos = todos.map((entry) => {
     return (
       <div key={entry.id2}>
-        <SingleTodo todo={entry} index={id1} todos={TheArray} setTodos={setTheArray} file={file} session={session}/>
+        <SingleTodo todo={entry} index={id1} todos={todos} setTodos={setTodos} file={file} session={session}/>
       </div>
 
     )

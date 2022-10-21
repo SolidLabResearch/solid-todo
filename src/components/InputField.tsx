@@ -2,6 +2,7 @@ import { useRef, useState } from 'react'
 import { QueryEngine } from '@comunica/query-sparql-link-traversal-solid'
 import { QueryStringContext } from '@comunica/types'
 import { ActorHttpInruptSolidClientAuthn } from '@comunica/actor-http-inrupt-solid-client-authn'
+import { TheArr } from '../logic/model'
 
 const InputField = ({ todos, setTodos, file, session }: any): any => {
   // const { session } = useSession()
@@ -32,6 +33,8 @@ const InputField = ({ todos, setTodos, file, session }: any): any => {
     sodo:status "${status}";
     sodo:dateCreated "${createdDate}".
     }`, context)
+    const newTodo: TheArr = { id2: id, text2: todo, boo2: status === 'true', dateCreated: createdDate }
+    setTodos([...todos, newTodo])
   }
 
   function handleAdd(event: React.FormEvent<HTMLFormElement>): void {
