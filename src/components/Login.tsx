@@ -47,7 +47,7 @@ const Login: React.FC = (): JSX.Element => {
       setPodUrl(podUrl1)
       console.log(podUrl)
       // const location: any = 'public/todosnew/'
-      const containerUri: any = podUrl1 as string + ('private/todosnew/' as string)
+      const containerUri: any = podUrl1 + ('private/todosnew/' as string)
       console.log(containerUri)
       const file: any = (containerUri.split('Data')[0] as string) + ('todos.ttl' as string)
       // const file: any = (containerUri.split('Data')[0] as string)
