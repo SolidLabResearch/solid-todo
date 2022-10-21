@@ -15,7 +15,6 @@ const TodoList: React.FC<{
 }> = ({ todos, setTodos, file, session }): any => {
   const readArray: any[] = []
   const readArray1: any[] = []
-  const readArray2: any[] = []
   let text1: any
   let text: any
   let text2: any
@@ -28,6 +27,8 @@ const TodoList: React.FC<{
 
   const display = async (): Promise<void> => {
     console.log('im in display')
+
+    // 1. query my pod for my existing todos
     const myEngine = new QueryEngine()
     const context: QueryStringContext = {
       sources: [file],
@@ -42,8 +43,10 @@ const TodoList: React.FC<{
          ?id  <http://sodo-example.com/dateCreated> ?dateCreated .
         }`, context
     )
-
     const bindings = await bindingsStream.toArray()
+
+    // 2. Map bindings to a map of todos
+    const podTodos = {}
     bindings.forEach((element) => {
       id = element.get('id').value
       id1 = id.split('/').pop()
@@ -62,14 +65,22 @@ const TodoList: React.FC<{
       console.log(boo)
       readArray.push(text2)
       readArray1.push(id2)
-      readArray2.push({ id2, text2, boo2, dateCreated })
-      console.log(readArray2)
-      // setTheArray1([readArray, readArray1, readArray2])
-      // setTheArray([...TheArray,{text2:readArray, id2:readArray1, boo2:readArray2}])
+      const newTodo: TheArr = { id2, text2, boo2, dateCreated }
+      podTodos[id2] = newTodo
       //  setTheArray(TheArray => TheArray.append(text2))
       //  console.log(TheArray1)
       //  setTheArray(readArray =>  [...readArray,text2])
-      setTheArray([...TheArray, ...readArray2])
+    })
+    // 3. update the current array with the pod todos.
+    // I'm using a map to make sure I don't get duplicates
+    setTheArray(TheArray => {
+      let todoMap = {}
+      TheArray.forEach(todo => {
+        todoMap[todo.id2] = todo
+      })
+      todoMap = Object.assign(todoMap, podTodos)
+
+      return Object.values(todoMap)
       // myEngine.invalidateHttpCache(id2, text2)
 
       //  setTheArray( [...TheArray, {text2, id2, boo2}])
