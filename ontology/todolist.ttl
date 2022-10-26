@@ -90,10 +90,10 @@
 
 :status a rdf:Property ;
     rdfs:label "status" ;
-    rdfs:comment "The status of the task. False if it still needs to be done, true if it is done." ;
+    rdfs:comment "The status of the task. False if it is still PENDING ☐, true if it is COMPLETED ☑." ;
     owl:equivalentProperty ical:status ;
     rdfs:domain :Task ;
-    rdfs:range xsd:boolean . # it might be possible that we have more states later (e.g. TODO, DONE, PENDING, BLOCKED, OBSOLETE, REVIEW, ARCHIVED, ..) ## TODO: How to do that in the ontology?
+    rdfs:range xsd:boolean . # it might be possible that we have more states later (e.g. TODO, DONE, BLOCKED, OBSOLETE, REVIEW, ARCHIVED, ..) ## TODO: How to do that in the ontology?
 
 :isPartOf a rdf:Property ;
     rdfs:label "is part of" ;
