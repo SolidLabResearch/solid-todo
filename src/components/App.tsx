@@ -7,7 +7,7 @@ interface IAppProps {
   ses?: Session
 }
 
-const App: React.FC<IAppProps> = (props: IAppProps): JSX.Element => {
+const App: React.FC<IAppProps> = (): JSX.Element => {
   return (
     <Login />
   )

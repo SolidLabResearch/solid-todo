@@ -1,8 +1,6 @@
 import { createSolidDataset, getSolidDataset, saveSolidDatasetAt } from '@inrupt/solid-client'
-import { Session } from '@inrupt/solid-client-authn-browser'
-import { findTaskEntries } from './query'
-import { Todo } from './model'
 
+// Deprecated function component
 async function getOrCreateTodoList(containerUri: string, fetch: any): Promise<any> {
   const indexUrl = `${containerUri}index.ttl`
   try {
@@ -15,8 +13,4 @@ async function getOrCreateTodoList(containerUri: string, fetch: any): Promise<an
   }
 }
 
-async function getTodoListViaQuery(session: Session): Promise<Todo[]> {
-  return await findTaskEntries(session)
-}
-
-export { getOrCreateTodoList, getTodoListViaQuery }
+export { getOrCreateTodoList }

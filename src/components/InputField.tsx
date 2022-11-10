@@ -2,13 +2,13 @@ import { useRef, useState } from 'react'
 import { QueryEngine } from '@comunica/query-sparql-link-traversal-solid'
 import { QueryStringContext } from '@comunica/types'
 import { ActorHttpInruptSolidClientAuthn } from '@comunica/actor-http-inrupt-solid-client-authn'
-import { TheArr } from '../logic/model'
+import { TodoItem } from '../logic/model'
 
 const InputField = ({ todos, setTodos, file, session }: any): any => {
-  // const { session } = useSession()
   const inputRef = useRef<HTMLInputElement>(null)
   const [todo, setTodo] = useState<string>('')
-  console.log(session.info.webId)
+
+  // Inserts new todo item to the pod.
   const addTodo = async (todo: string): Promise<any> => {
     const myEngine = new QueryEngine()
     const context: QueryStringContext = {
@@ -25,16 +25,18 @@ const InputField = ({ todos, setTodos, file, session }: any): any => {
       PREFIX sodo: <http://sodo-example.com/>
       PREFIX ex: <http://www.example.com/> 
       
-        
-    INSERT DATA {
-    <#${id}>
-    a sodo:Task;
-    sodo:label "${todo}";
-    sodo:status "${status}";
-    sodo:dateCreated "${createdDate}".
-    }`, context)
-    const newTodo: TheArr = { id2: id, text2: todo, boo2: status === 'true', dateCreated: createdDate }
+      INSERT DATA{
+      <#${id}> a sodo:task;
+      sodo:label "${todo}";
+      sodo:status "${status}";
+      sodo:dateCreated "${createdDate}".
+      }`, context)
+      .then(() => { confirm('New task  added to your pod!') })
+      .catch(() => { alert('Sorry! Adding new task to your pod failed!!!') })
+    const newTodo: TodoItem = { id, text: todo, status: status === 'true', dateCreated: createdDate }
     setTodos([...todos, newTodo])
+
+    window.location.reload()
   }
 
   function handleAdd(event: React.FormEvent<HTMLFormElement>): void {
