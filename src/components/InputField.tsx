@@ -34,7 +34,7 @@ const InputField = ({ todos, setTodos, file, session }: any): any => {
       }`, context)
       .then(() => { confirm('New task  added to your pod!') })
       .catch((error) => { alert(`Inserting new task failed: ${String(error.message)}`) })
-    const newTodo: TodoItem = { id, text: todo, status: status === 'true', dateCreated: createdDate, createdBy: session.info.webId, taskList: 'Default Task' }
+    const newTodo: TodoItem = { id, text: todo, status: status === 'true', dateCreated: createdDate, createdBy: session.info.webId }
     setTodos([...todos, newTodo])
 
     window.location.reload()
