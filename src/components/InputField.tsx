@@ -32,7 +32,7 @@ const InputField = ({ todos, setTodos, file, session }: any): any => {
       sodo:dateCreated "${createdDate}".
       }`, context)
       .then(() => { confirm('New task  added to your pod!') })
-      .catch((error) => { alert(`Inserting new task failed: ${error.message}`) })
+      .catch((error) => { alert('Inserting new task failed: ${error.message}') })
     const newTodo: TodoItem = { id, text: todo, status: status === 'true', dateCreated: createdDate }
     setTodos([...todos, newTodo])
 
