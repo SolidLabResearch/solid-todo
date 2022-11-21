@@ -38,7 +38,7 @@ const Login: React.FC = (): JSX.Element => {
       // apparently we can't do that
       }
       const containerUri: any = baseUrl + ('private/todos/' as string)
-      const file: any = (containerUri.split('Data')[0] as string) + ('todos.ttl' as string)
+      const file: any = (containerUri.split('Data')[0] as string) + ('todos' as string)
       setFile(file)
       // setFile('http://localhost:3000/private/todos/todos.ttl')
       return file
