@@ -4,7 +4,6 @@ interface TodoItem {
   status: boolean
   dateCreated: string
   createdBy: string
-  taskList: string
 }
 
 export { type TodoItem }

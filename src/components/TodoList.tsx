@@ -22,12 +22,11 @@ const TodoList: React.FC<{
       [ActorHttpInruptSolidClientAuthn.CONTEXT_KEY_SESSION.name]: session
     }
     const bindingsStream = await myEngine.queryBindings(`
-        SELECT ?id ?todo ?status ?dateCreated ?createdBy ?taskList WHERE {
+        SELECT ?id ?todo ?status ?dateCreated ?createdBy WHERE {
          ?id <http://example.org/todolist/title> ?todo .
          ?id <http://example.org/todolist/status> ?status .  
          ?id  <http://example.org/todolist/dateCreated> ?dateCreated .
          ?id <http://example.org/todolist/createdBy> ?createdBy . 
-         ?id <http://example.org/todolist/isPartOf> ?taskList .
         }`, context
     )
       .catch((error) => { alert(`Sorry! Couldnt fetch the data! ${String(error.message)} `) })
@@ -42,8 +41,7 @@ const TodoList: React.FC<{
       const status = statusFromPod.toLowerCase() === 'true'
       const dateCreated = element.get('dateCreated').value
       const createdBy = element.get('createdBy').value
-      const taskList = element.get('taskList').value
-      const newTodo: TodoItem = { id, text, status, dateCreated, createdBy, taskList }
+      const newTodo: TodoItem = { id, text, status, dateCreated, createdBy }
       podTodos[id] = newTodo
     })
 
