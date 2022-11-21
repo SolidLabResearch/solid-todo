@@ -30,7 +30,7 @@ const InputField = ({ todos, setTodos, file, session }: any): any => {
       sodo:status "${status}";
       sodo:dateCreated "${createdDate}";
       sodo:createdBy "${session.info.webId as string}";
-      sodo:isPartOf "Default TaskList" .
+      sodo:isPartOf <#${id}> .
       }`, context)
       .then(() => { confirm('New task  added to your pod!') })
       .catch((error) => { alert(`Inserting new task failed: ${String(error.message)}`) })
