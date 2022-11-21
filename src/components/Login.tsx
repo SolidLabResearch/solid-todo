@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import { LoginButton, LogoutButton, useSession, CombinedDataProvider } from '@inrupt/solid-ui-react'
-import InputField from './InputField'
 import { QueryEngine } from '@comunica/query-sparql'
 import { TodoItem } from '../logic/model'
-import TodoList from './TodoList'
+import LocationSelection from './LocationSelection'
+// import { BrowserRouter as Router, Link, Route, Routes } from 'react-router-dom'
 
 const authOptions = {
   clientName: 'Solid Todo App'
@@ -13,7 +13,6 @@ const Login: React.FC = (): JSX.Element => {
   const { session } = useSession()
   const [oidcIssuer, setOidcIssuer] = useState('')
   const [userName, setUserName] = useState('')
-  const [file, setFile] = useState('')
   const [todos, setTodos] = useState<TodoItem[]>([])
 
   useEffect(() => {
@@ -37,11 +36,12 @@ const Login: React.FC = (): JSX.Element => {
       } catch (e) {
       // apparently we can't do that
       }
-      const containerUri: any = baseUrl + ('private/todos/' as string)
-      const file: any = (containerUri.split('Data')[0] as string) + ('todos.ttl' as string)
-      setFile(file)
-      // setFile('http://localhost:3000/private/todos/todos.ttl')
-      return file
+      return baseUrl
+      // const containerUri: any = baseUrl + ('private/todos/' as string)
+    //   const file: any = (containerUri.split('Data')[0] as string) + ('todos.ttl' as string)
+    //   setFile(file)
+    //   // setFile('http://localhost:3000/private/todos/todos.ttl')
+    //   return file
     })()
   }, [session, session.info.isLoggedIn])
 
@@ -100,9 +100,11 @@ const Login: React.FC = (): JSX.Element => {
               onLogout={function noRefCheck() {}}
             />
           </div>
-          <InputField todos={todos} setTodos={setTodos} file={file} session={session}/>
-          <TodoList todos={todos} setTodos={setTodos} file={file} session={session} />
-
+          <div>
+            <LocationSelection todos={todos} setTodos={setTodos} session={session} webID={webID}/>
+          </div>
+          {/* <InputField todos={todos} setTodos={setTodos} file={file} session={session}/>
+          <TodoList todos={todos} setTodos={setTodos} file={file} session={session} /> */}
         </CombinedDataProvider>
       </div>
     )

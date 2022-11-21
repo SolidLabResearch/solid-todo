@@ -62,9 +62,9 @@ const SingleTodo: React.FC<{
       PREFIX sodo: <http://sodo-example.com/>
       PREFIX ex: <http://www.example.com/> 
 
-      DELETE {<${todo.id}> <http://sodo-example.com/label> "${todo.text}".}
-      INSERT {<${todo.id}> <http://sodo-example.com/label> "${editTodo}"; <http://sodo-example.com/dateModified> "${createdDate}".}
-      WHERE  {<${todo.id}> <http://sodo-example.com/label> "${todo.text}".}`, context)
+      DELETE {<${todo.id}> <http://sodo-example.com/title> "${todo.text}".}
+      INSERT {<${todo.id}> <http://sodo-example.com/title> "${editTodo}"; <http://sodo-example.com/dateModified> "${createdDate}".}
+      WHERE  {<${todo.id}> <http://sodo-example.com/title> "${todo.text}".}`, context)
       .then(() => { confirm('Updated the todo item from ' + todo.text + ' to ' + editTodo) })
       .catch(() => { alert('Sorry! Update failed!') })
   }
@@ -92,7 +92,7 @@ const SingleTodo: React.FC<{
       
       DELETE {<${todo.id}> <http://sodo-example.com/status> "${oldStatus}".}
       INSERT {<${todo.id}> <http://sodo-example.com/status> "${newStatus}".}
-      WHERE  {<${todo.id}> <http://sodo-example.com/label> "${todo.text}".}`, context)
+      WHERE  {<${todo.id}> <http://sodo-example.com/title> "${todo.text}".}`, context)
       .then(() => { confirm('Todo status of ' + todo.text + ' changed to ' + currentStatus) })
       .catch(() => { alert('Sorry! Failed to change the status of the todo item!!') })
   }

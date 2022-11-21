@@ -22,21 +22,22 @@ const InputField = ({ todos, setTodos, file, session }: any): any => {
     const status: string = 'false'
 
     await myEngine.queryVoid(`
-      PREFIX sodo: <http://sodo-example.com/>
-      PREFIX ex: <http://www.example.com/> 
+      PREFIX sodo:  <http://example.org/todolist/> 
       
       INSERT DATA{
-      <#${id}> a sodo:task;
-      sodo:label "${todo}";
+      <#${id}> a sodo:Task;
+      sodo:title "${todo}";
       sodo:status "${status}";
       sodo:dateCreated "${createdDate}".
       }`, context)
       .then(() => { confirm('New task  added to your pod!') })
-      .catch(() => { alert('Sorry! Adding new task to your pod failed!!!') })
+      .catch((error) => { alert(`Sorry! Adding new task to your pod failed!!! ${String(error)}`) })
     const newTodo: TodoItem = { id, text: todo, status: status === 'true', dateCreated: createdDate }
     setTodos([...todos, newTodo])
+    // sodo:createdBy {webId};
+    //   sodo:isPartOf {id of tasklist}
 
-    window.location.reload()
+    // window.location.reload()
   }
 
   function handleAdd(event: React.FormEvent<HTMLFormElement>): void {

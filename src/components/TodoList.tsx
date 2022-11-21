@@ -23,12 +23,12 @@ const TodoList: React.FC<{
     }
     const bindingsStream = await myEngine.queryBindings(`
         SELECT ?id ?todo ?status ?dateCreated WHERE {
-         ?id <http://sodo-example.com/label> ?todo .
-         ?id <http://sodo-example.com/status> ?status .  
-         ?id  <http://sodo-example.com/dateCreated> ?dateCreated .
+         ?id <http://example.org/todolist/title> ?todo .
+         ?id <http://example.org/todolist/status> ?status .  
+         ?id  <http://example.org/todolist/dateCreated> ?dateCreated .
         }`, context
     )
-      .catch(() => { alert('Sorry! Couldnt fetch the data!') })
+      .catch((error) => { alert(`Sorry! Couldnt fetch the data! ${String(error)}`) })
     const bindings = await bindingsStream.toArray()
 
     // 2. Map bindings to a map of todos
@@ -41,7 +41,6 @@ const TodoList: React.FC<{
       const dateCreated = element.get('dateCreated').value
       const newTodo: TodoItem = { id, text, status, dateCreated }
       podTodos[id] = newTodo
-      console.log(newTodo)
     })
 
     // 3. update the current array with the pod todos.
