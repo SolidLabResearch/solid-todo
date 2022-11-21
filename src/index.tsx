@@ -5,4 +5,4 @@ import { createRoot } from 'react-dom/client'
 
 const rootMountPoint: HTMLElement = document.getElementById('root') as HTMLElement
 
-createRoot(rootMountPoint).render(<SessionProvider> <App /> </SessionProvider>)
+createRoot(rootMountPoint).render(<SessionProvider restorePreviousSession={true}> <App /> </SessionProvider>)

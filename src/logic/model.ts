@@ -1,15 +1,10 @@
-interface Todo {
+interface TodoItem {
   id: number
-  todo: string
-  isDone: boolean
-  iri?: URL
-}
-
-interface TheArr {
-  id2: number
-  text2: string
-  boo2: boolean
+  text: string
+  status: boolean
   dateCreated: string
+  createdBy: string
+  taskList: string
 }
 
-export { type Todo, type TheArr }
+export { type TodoItem }

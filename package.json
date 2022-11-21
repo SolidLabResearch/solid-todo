@@ -17,6 +17,7 @@
     "lint": "eslint . --max-warnings 0"
   },
   "dependencies": {
+    "@comunica/actor-http-inrupt-solid-client-authn": "^2.4.0",
     "@comunica/query-sparql-link-traversal-solid": "^0.0.2-alpha.6.0",
     "@inrupt/solid-client": "^1.23.3",
     "@inrupt/solid-client-authn-browser": "^1.12.2",

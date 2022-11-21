@@ -1,32 +1,18 @@
 import { QueryEngine } from '@comunica/query-sparql-link-traversal-solid'
 import { Session } from '@inrupt/solid-client-authn-browser'
-
 import { useEffect } from 'react'
-import { TheArr } from '../logic/model'
+import { TodoItem } from '../logic/model'
 import SingleTodo from './SingleTodo'
 import { QueryStringContext } from '@comunica/types'
 import { ActorHttpInruptSolidClientAuthn } from '@comunica/actor-http-inrupt-solid-client-authn'
 
 const TodoList: React.FC<{
-  todos: TheArr[]
-  setTodos: React.Dispatch<React.SetStateAction<TheArr[]>>
+  todos: TodoItem[]
+  setTodos: React.Dispatch<React.SetStateAction<TodoItem[]>>
   file: string
   session: Session
 }> = ({ todos, setTodos, file, session }): any => {
-  const readArray: any[] = []
-  const readArray1: any[] = []
-  let text1: any
-  let text: any
-  let text2: any
-  let id: any
-  let id1: any
-  let id2: any
-  let boo: string
-  let dateCreated: string
-
   const display = async (): Promise<void> => {
-    console.log('im in display')
-
     // 1. query my pod for my existing todos
     const myEngine = new QueryEngine()
     const context: QueryStringContext = {
@@ -36,46 +22,39 @@ const TodoList: React.FC<{
       [ActorHttpInruptSolidClientAuthn.CONTEXT_KEY_SESSION.name]: session
     }
     const bindingsStream = await myEngine.queryBindings(`
-        SELECT ?id ?todo ?status ?dateCreated WHERE {
-         ?id <http://sodo-example.com/label> ?todo .
-         ?id <http://sodo-example.com/status> ?status .  
-         ?id  <http://sodo-example.com/dateCreated> ?dateCreated .
+        SELECT ?id ?todo ?status ?dateCreated ?createdBy ?taskList WHERE {
+         ?id <http://example.org/todolist/title> ?todo .
+         ?id <http://example.org/todolist/status> ?status .  
+         ?id  <http://example.org/todolist/dateCreated> ?dateCreated .
+         ?id <http://example.org/todolist/createdBy> ?createdBy . 
+         ?id <http://example.org/todolist/isPartOf> ?taskList .
         }`, context
     )
+      .catch((error) => { alert(`Sorry! Couldnt fetch the data! ${String(error.message)} `) })
     const bindings = await bindingsStream.toArray()
 
     // 2. Map bindings to a map of todos
     const podTodos = {}
     bindings.forEach((element) => {
-      id = element.get('id').value
-      id1 = id.split('/').pop()
-      id2 = id1
-      console.log(id2)
-      text = element.get('todo').value
-      text1 = text.split('/').pop()
-      text2 = text1
-      console.log(text1)
-      boo = element.get('status').value
-      //  boo1 = boo.split('/').pop()
-      const boo2 = boo.toLowerCase() === 'true'
-      console.log('The typeof boo is ', typeof (boo2))
-      dateCreated = element.get('dateCreated').value
-      // dateCreated1 = dateCreated.split('/').pop()
-      console.log(boo)
-      readArray.push(text2)
-      readArray1.push(id2)
-      const newTodo: TheArr = { id2, text2, boo2, dateCreated }
-      podTodos[id2] = newTodo
+      const id = element.get('id').value
+      const text = element.get('todo').value
+      const statusFromPod = element.get('status').value
+      const status = statusFromPod.toLowerCase() === 'true'
+      const dateCreated = element.get('dateCreated').value
+      const createdBy = element.get('createdBy').value
+      const taskList = element.get('taskList').value
+      const newTodo: TodoItem = { id, text, status, dateCreated, createdBy, taskList }
+      podTodos[id] = newTodo
     })
+
     // 3. update the current array with the pod todos.
     // I'm using a map to make sure I don't get duplicates
     let todoMap = {}
     todos.forEach(todo => {
-      todoMap[todo.id2] = todo
+      todoMap[todo.id] = todo
     })
     todoMap = Object.assign(todoMap, podTodos)
     setTodos(Object.values(todoMap))
-    // myEngine.invalidateHttpCache(id2, text2)
   }
 
   useEffect(() => {
@@ -84,8 +63,8 @@ const TodoList: React.FC<{
 
   const displaytodos = todos.map((entry) => {
     return (
-      <div key={entry.id2}>
-        <SingleTodo todo={entry} index={id1} todos={todos} setTodos={setTodos} file={file} session={session}/>
+      <div key={entry.id}>
+        <SingleTodo todo={entry} todos={todos} setTodos={setTodos} file={file} session={session}/>
       </div>
 
     )

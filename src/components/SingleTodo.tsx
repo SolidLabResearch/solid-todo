@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { type TheArr } from '../logic/model'
+import { type TodoItem } from '../logic/model'
 import { AiFillEdit, AiFillDelete } from 'react-icons/ai'
 import { MdDone } from 'react-icons/md'
 import './style.css'
@@ -8,19 +8,20 @@ import { QueryStringContext } from '@comunica/types'
 import { ActorHttpInruptSolidClientAuthn } from '@comunica/actor-http-inrupt-solid-client-authn'
 
 const SingleTodo: React.FC<{
-  index: number
-  todo: TheArr
-  todos: TheArr[]
-  setTodos: React.Dispatch<React.SetStateAction<TheArr[]>>
+  todo: TodoItem
+  todos: TodoItem[]
+  setTodos: React.Dispatch<React.SetStateAction<TodoItem[]>>
   file: string
   session: any
-}> = ({ index, todo, todos, setTodos, file, session }): any => {
+}> = ({ todo, todos, setTodos, file, session }): any => {
   const [edit, setEdit] = useState<boolean>(false)
   const [editTodo, setEditTodo] = useState<string>('')
   const inputRef = useRef<HTMLInputElement>(null)
+
   useEffect(() => {
     inputRef.current?.focus()
   }, [edit])
+
   const myEngine = new QueryEngine()
   const context: QueryStringContext = {
     sources: [file],
@@ -29,75 +30,83 @@ const SingleTodo: React.FC<{
   }
   context[ActorHttpInruptSolidClientAuthn.CONTEXT_KEY_SESSION.name] = session
 
-  const deleteTodo = async (id2): Promise<any> => {
-    console.log(id2)
+  // to delete
+  const handleDelete = async (id): Promise<any> => {
+    setTodos(todos.filter((todo) => todo.id !== id))
 
-    setTodos(todos.filter((todo) => todo.id2 !== id2))
-
-    if (todo.id2 === id2) console.log(todo.text2, todo.id2, todo.boo2)
-
-    console.log('Deleting todos')
-    const queryBoo: string = todo.boo2 as unknown as string
     await myEngine.queryVoid(`
-    PREFIX tod: <>
+      PREFIX tod: <>
       PREFIX tur: <http://www.w3.org/ns/iana/media-types/text/turtle#>
-      PREFIX sodo: <http://sodo-example.com/>
-      PREFIX ex: <http://www.example.com/> 
-
-      DELETE DATA {<${todo.id2}> <http://sodo-example.com/label> "${todo.text2}"; <http://sodo-example.com/status> "${queryBoo}"; <http://sodo-example.com/dateCreated> "${todo.dateCreated}".}`, context)
+      PREFIX sodo: <http://example.org/todolist/>
+      
+      DELETE WHERE {<${todo.id}> ?p ?o.}`, context)
+      .then(() => { confirm('Deleting the selected todo entry!') })
+      .catch((error) => { alert(`Unable to delete todo: ${String(error.message)}`) })
   }
 
-  const editTheTodo = async (e: React.FormEvent, id2: number): Promise<any> => {
+  // to edit todo item
+  const editTheTodo = async (e: React.FormEvent, id: number): Promise<any> => {
     e.preventDefault()
     setTodos(
-      todos.map((todo) => (todo.id2 === id2 ? { ...todo, todo: editTodo } : todo))
+      todos.map((todo) => (todo.id === id ? { ...todo, text: editTodo } : todo))
     )
-    console.log(editTodo)
+    // Modified date for an edited todo item.
     const createdDate: string = new Date(Date.now()) as unknown as string
     setEdit(false)
+
     await myEngine.queryVoid(`
     PREFIX tod: <>
       PREFIX tur: <http://www.w3.org/ns/iana/media-types/text/turtle#>
-      PREFIX sodo: <http://sodo-example.com/>
-      PREFIX ex: <http://www.example.com/> 
-      DELETE {<${todo.id2}> <http://sodo-example.com/label> "${todo.text2}".}
-      INSERT {<${todo.id2}> <http://sodo-example.com/label> "${editTodo}"; <http://sodo-example.com/dateModified> "${createdDate}".}
-      WHERE  {<${todo.id2}> <http://sodo-example.com/label> "${todo.text2}".}`, context)
+      PREFIX sodo: <http://example.org/todolist/>
+
+      DELETE {<${todo.id}> <http://example.org/todolist/title> "${todo.text}".}
+      INSERT {<${todo.id}> <http://example.org/todolist/title> "${editTodo}"; <http://example.org/todolist/dateModified> "${createdDate}".}
+      WHERE  {<${todo.id}> <http://example.org/todolist/title> "${todo.text}".}`, context)
+      .then(() => { confirm('Updated the todo item from ' + todo.text + ' to ' + editTodo) })
+      .catch((error) => { alert(`Sorry! Update failed! : ${String(error.message)}`) })
   }
 
-  const doneTodo = async (id2): Promise<void> => {
+  // to set the todo status. false -> pending. true -> completed.
+  const doneTodo = async (id): Promise<void> => {
     setTodos(
       todos.map((todo) =>
-        todo.id2 === id2 ? { ...todo, boo2: !todo.boo2 } : todo
+        todo.id === id ? { ...todo, status: !todo.status } : todo
       )
     )
-    const queryBoo: string = todo.boo2 as unknown as string
-    const queryBooNew: string = !todo.boo2 as unknown as string
+
+    const oldStatus: string = todo.status as unknown as string
+    const newStatus: string = !todo.status as unknown as string
+
+    let currentStatus: string
+
+    newStatus as unknown as boolean ? currentStatus = 'completed' : currentStatus = 'pending'
+
     await myEngine.queryVoid(`
     PREFIX tod: <>
       PREFIX tur: <http://www.w3.org/ns/iana/media-types/text/turtle#>
-      PREFIX sodo: <http://sodo-example.com/>
-      PREFIX ex: <http://www.example.com/> 
+      PREFIX sodo: <http://example.org/todolist/>
       
-      DELETE {<${todo.id2}> <http://sodo-example.com/status> "${queryBoo}".}
-                    INSERT {<${todo.id2}> <http://sodo-example.com/status> "${queryBooNew}".}
-                    WHERE  {<${todo.id2}> <http://sodo-example.com/label> "${todo.text2}".}`, context)
+      DELETE {<${todo.id}> <http://example.org/todolist/status> "${oldStatus}".}
+      INSERT {<${todo.id}> <http://example.org/todolist/status> "${newStatus}".}
+      WHERE  {<${todo.id}> <http://example.org/todolist/title> "${todo.text}".}`, context)
+      .then(() => { confirm('Todo status of ' + todo.text + ' changed to ' + currentStatus) })
+      .catch((error) => { alert(`Sorry! Failed to change the status of the todo item : ${String(error.message)}`) })
   }
 
-  function handleEdit(e, id2): any {
-    void editTheTodo(e, id2)
+  function handleEdit(e, id): any {
+    void editTheTodo(e, id)
   }
 
-  function handleDelete(id2): any {
-    void deleteTodo(id2)
-  }
+  // function handleDelete(id): any {
+  //   void deleteTodo(id)
+  // }
 
-  function handleDone(id2): any {
-    void doneTodo(id2)
+  function handleDone(id): any {
+    void doneTodo(id)
   }
 
   return (
-    <form className="todos__single" onSubmit={(e) => handleEdit(e, todo.id2)}>
+    <form className="todos__single" onSubmit={(e) => handleEdit(e, todo.id)}>
       {edit
         ? (
           <input
@@ -106,11 +115,11 @@ const SingleTodo: React.FC<{
             className="todos__single--text"
             ref={inputRef}
           />)
-        : todo.boo2
+        : todo.status
           ? (
-            <s className="todos__single--text">{todo.text2} {todo.boo2}</s>)
+            <s className="todos__single--text">{todo.text} </s>)
           : (
-            <span className="todos__single--text">{todo.text2} {todo.boo2}</span>)}
+            <span className="todos__single--text">{todo.text} </span>)}
 
       <div>
         <span className='icon'
@@ -122,11 +131,11 @@ const SingleTodo: React.FC<{
           <AiFillEdit />
         </span>
 
-        <span className='icon' onClick={() => handleDelete(todo.id2)}>
+        <span className='icon' onClick={() => handleDelete(todo.id) as unknown}>
           <AiFillDelete />
         </span>
 
-        <span className='icon' onClick={() => handleDone(todo.id2)}>
+        <span className='icon' onClick={() => handleDone(todo.id)}>
           <MdDone />
         </span>
       </div>
