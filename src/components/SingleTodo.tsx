@@ -43,7 +43,7 @@ const SingleTodo: React.FC<{
 
       DELETE WHERE {<${todo.id}> ?p ?o.}`, context)
       .then(() => { confirm('Deleting the selected todo entry!') })
-      .catch(() => { alert('Sorry! Cant delete the ' + todo.text + ' todo item!') })
+      .catch((error) => { alert(`Unable to delete todo: ${error.message}`) })
   }
 
   // to edit todo item
