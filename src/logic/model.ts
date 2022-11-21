@@ -3,6 +3,8 @@ interface TodoItem {
   text: string
   status: boolean
   dateCreated: string
+  createdBy: string
+  taskList: string
 }
 
 export { type TodoItem }

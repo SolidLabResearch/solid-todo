@@ -34,16 +34,14 @@ const SingleTodo: React.FC<{
   const handleDelete = async (id): Promise<any> => {
     setTodos(todos.filter((todo) => todo.id !== id))
 
-    if (todo.id === id) 
     await myEngine.queryVoid(`
-    PREFIX tod: <>
+      PREFIX tod: <>
       PREFIX tur: <http://www.w3.org/ns/iana/media-types/text/turtle#>
-      PREFIX sodo: <http://sodo-example.com/>
-      PREFIX ex: <http://www.example.com/> 
-
+      PREFIX sodo: <http://example.org/todolist/>
+      
       DELETE WHERE {<${todo.id}> ?p ?o.}`, context)
       .then(() => { confirm('Deleting the selected todo entry!') })
-      .catch((error) => { alert('Unable to delete todo: ${error.message}') })
+      .catch((error) => { alert(`Unable to delete todo: ${String(error.message)}`) })
   }
 
   // to edit todo item
@@ -59,14 +57,13 @@ const SingleTodo: React.FC<{
     await myEngine.queryVoid(`
     PREFIX tod: <>
       PREFIX tur: <http://www.w3.org/ns/iana/media-types/text/turtle#>
-      PREFIX sodo: <http://sodo-example.com/>
-      PREFIX ex: <http://www.example.com/> 
+      PREFIX sodo: <http://example.org/todolist/>
 
-      DELETE {<${todo.id}> <http://sodo-example.com/label> "${todo.text}".}
-      INSERT {<${todo.id}> <http://sodo-example.com/label> "${editTodo}"; <http://sodo-example.com/dateModified> "${createdDate}".}
-      WHERE  {<${todo.id}> <http://sodo-example.com/label> "${todo.text}".}`, context)
+      DELETE {<${todo.id}> <http://example.org/todolist/title> "${todo.text}".}
+      INSERT {<${todo.id}> <http://example.org/todolist/title> "${editTodo}"; <http://example.org/todolist/dateModified> "${createdDate}".}
+      WHERE  {<${todo.id}> <http://example.org/todolist/title> "${todo.text}".}`, context)
       .then(() => { confirm('Updated the todo item from ' + todo.text + ' to ' + editTodo) })
-      .catch((error) => { alert('Sorry! Update failed! : ${error.message}') })
+      .catch((error) => { alert(`Sorry! Update failed! : ${String(error.message)}`) })
   }
 
   // to set the todo status. false -> pending. true -> completed.
@@ -87,14 +84,13 @@ const SingleTodo: React.FC<{
     await myEngine.queryVoid(`
     PREFIX tod: <>
       PREFIX tur: <http://www.w3.org/ns/iana/media-types/text/turtle#>
-      PREFIX sodo: <http://sodo-example.com/>
-      PREFIX ex: <http://www.example.com/> 
+      PREFIX sodo: <http://example.org/todolist/>
       
-      DELETE {<${todo.id}> <http://sodo-example.com/status> "${oldStatus}".}
-      INSERT {<${todo.id}> <http://sodo-example.com/status> "${newStatus}".}
-      WHERE  {<${todo.id}> <http://sodo-example.com/label> "${todo.text}".}`, context)
+      DELETE {<${todo.id}> <http://example.org/todolist/status> "${oldStatus}".}
+      INSERT {<${todo.id}> <http://example.org/todolist/status> "${newStatus}".}
+      WHERE  {<${todo.id}> <http://example.org/todolist/title> "${todo.text}".}`, context)
       .then(() => { confirm('Todo status of ' + todo.text + ' changed to ' + currentStatus) })
-      .catch((error) => { alert('Sorry! Failed to change the status of the todo item : ${error.message}') })
+      .catch((error) => { alert(`Sorry! Failed to change the status of the todo item : ${String(error.message)}`) })
   }
 
   function handleEdit(e, id): any {

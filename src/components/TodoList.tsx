@@ -22,13 +22,15 @@ const TodoList: React.FC<{
       [ActorHttpInruptSolidClientAuthn.CONTEXT_KEY_SESSION.name]: session
     }
     const bindingsStream = await myEngine.queryBindings(`
-        SELECT ?id ?todo ?status ?dateCreated WHERE {
-         ?id <http://sodo-example.com/label> ?todo .
-         ?id <http://sodo-example.com/status> ?status .  
-         ?id  <http://sodo-example.com/dateCreated> ?dateCreated .
+        SELECT ?id ?todo ?status ?dateCreated ?createdBy ?taskList WHERE {
+         ?id <http://example.org/todolist/title> ?todo .
+         ?id <http://example.org/todolist/status> ?status .  
+         ?id  <http://example.org/todolist/dateCreated> ?dateCreated .
+         ?id <http://example.org/todolist/createdBy> ?createdBy . 
+         ?id <http://example.org/todolist/isPartOf> ?taskList .
         }`, context
     )
-      .catch(() => { alert('Sorry! Couldnt fetch the data!') })
+      .catch((error) => { alert(`Sorry! Couldnt fetch the data! ${String(error.message)} `) })
     const bindings = await bindingsStream.toArray()
 
     // 2. Map bindings to a map of todos
@@ -39,9 +41,10 @@ const TodoList: React.FC<{
       const statusFromPod = element.get('status').value
       const status = statusFromPod.toLowerCase() === 'true'
       const dateCreated = element.get('dateCreated').value
-      const newTodo: TodoItem = { id, text, status, dateCreated }
+      const createdBy = element.get('createdBy').value
+      const taskList = element.get('taskList').value
+      const newTodo: TodoItem = { id, text, status, dateCreated, createdBy, taskList }
       podTodos[id] = newTodo
-      console.log(newTodo)
     })
 
     // 3. update the current array with the pod todos.

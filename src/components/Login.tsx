@@ -78,7 +78,7 @@ const Login: React.FC = (): JSX.Element => {
     const bindingsForName = await getUserName.toArray()
     // if(bindingsForName[0] ?? '')setUserName(bindingsForName[0].get('o').value)
     // else setUserName('No name found!!!')
-    bindingsForName[0]?.get('o').value as unknown as boolean ? setUserName(bindingsForName[0].get('o').value) : setUserName('No name found!!!')
+    bindingsForName[0]?.get('o').value as unknown as boolean ? setUserName(bindingsForName[0].get('o').value) : setUserName(webID)
     return userName
   }
   const webID = session.info.webId ?? oidcIssuer
