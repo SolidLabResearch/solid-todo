@@ -1,37 +1,15 @@
 import { useRef, useState } from 'react'
-import { TodoItem } from '../logic/model'
-import { update } from '../logic/engine'
+import { createTask } from '../logic/utils'
 
-const InputField = ({ todos, setTodos, file, session }: any): any => {
+const InputField = ({ todos, setTodos, file }: any): any => {
   const inputRef = useRef<HTMLInputElement>(null)
   const [todo, setTodo] = useState<string>('')
 
   // Inserts new todo item to the pod.
   const addTodo = async (todo: string): Promise<any> => {
-    const id = Date.now()
-    const createdDate: string = new Date(Date.now()) as unknown as string
-    const status: string = 'false'
-    const query = `
-      PREFIX todo: <http://example.org/todolist/> 
-      
-      INSERT DATA{
-      <#${id}> a todo:Task ;
-        todo:title "${todo}" ;
-        todo:status "${status}" ;
-        todo:dateCreated "${createdDate}" ;
-        todo:createdBy "${session.info.webId as string}" ;
-        todo:isPartOf <#default> .
-      }
-    `
-
-    update(query, { sources: [file], baseIRI: file }, session)
-      .then(() => { confirm('New task  added to your pod!') })
-      .catch((error) => { alert(`Inserting new task failed: ${String(error.message)}`) })
-
-    const newTodo: TodoItem = { id, text: todo, status: status === 'true', dateCreated: createdDate, createdBy: session.info.webId }
-    setTodos([...todos, newTodo])
-
-    window.location.reload()
+    createTask(todo, file)
+      .then((task) => setTodos([...todos, task]))
+      .catch(() => alert('Inserting new task failed'))
   }
 
   function handleAdd(event: React.FormEvent<HTMLFormElement>): void {

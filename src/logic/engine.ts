@@ -1,26 +1,28 @@
 import { QueryEngine } from '@comunica/query-sparql-link-traversal-solid'
 import { ActorHttpInruptSolidClientAuthn } from '@comunica/actor-http-inrupt-solid-client-authn'
 import { Bindings, BindingsStream, QueryStringContext } from '@comunica/types'
-import { Session } from '@inrupt/solid-client-authn-browser'
+import { session } from './session'
 
 const queryEngine: QueryEngine = new QueryEngine()
 
-function mergeContext(context: QueryStringContext, session?: Session): QueryStringContext {
-  if (session != null) {
+function configureContext(context: QueryStringContext): QueryStringContext {
+  if (session.info.isLoggedIn) {
     context[ActorHttpInruptSolidClientAuthn.CONTEXT_KEY_SESSION.name] = session
   }
   context.lenient = true
   return context
 }
 
-async function find(query: string, context: QueryStringContext, session?: Session): Promise<Bindings[]> {
-  const bindingsStream: BindingsStream = await queryEngine.queryBindings(query, mergeContext(context, session))
-  const bindings: Bindings[] = await bindingsStream.toArray()
-  return bindings
+async function find(query: string, context: QueryStringContext): Promise<Bindings[]> {
+  const finalContext: QueryStringContext = configureContext(context)
+  const bindingsStream: BindingsStream = await queryEngine.queryBindings(query, finalContext)
+  const bindingsArray: Bindings[] = await bindingsStream.toArray()
+  return bindingsArray
 }
 
-async function update(query: string, context: QueryStringContext, session?: Session): Promise<void> {
-  await queryEngine.queryVoid(query, mergeContext(context, session))
+async function update(query: string, context: QueryStringContext): Promise<void> {
+  const finalContext: QueryStringContext = configureContext(context)
+  await queryEngine.queryVoid(query, finalContext)
 }
 
 export { find, update }
