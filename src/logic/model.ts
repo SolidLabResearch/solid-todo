@@ -1,9 +1,10 @@
-interface TodoItem {
-  id: number
-  text: string
+interface ITask {
+  id: string
+  title: string
   status: boolean
   dateCreated: string
+  dateModified: string
   createdBy: string
 }
 
-export { type TodoItem }
+export { type ITask }

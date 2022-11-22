@@ -15,7 +15,8 @@ module.exports = {
   devServer: {
     host: 'localhost',
     port: process.env.PORT || 4000,
-    historyApiFallback: true
+    historyApiFallback: true,
+    hot: true
   },
   plugins: [
     new webpack.ProgressPlugin(),
