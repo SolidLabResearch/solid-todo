@@ -42,15 +42,14 @@ const Login: React.FC = (): JSX.Element => {
       setFile(file)
 
       // If file exists, default TaskList is created.
-      if(file){
-        await myEngine.queryVoid(` 
+
+      await myEngine.queryVoid(` 
       PREFIX sodo: <http://example.org/todolist/> 
       
       INSERT DATA{
       <#default> a sodo:Task;
       sodo:title "DefaultTaskList".
       }`)
-      }
       // setFile('http://localhost:3000/private/todos/todos.ttl')
       return file
     })()
