@@ -18,32 +18,34 @@ const TodoList: React.FC<{
     const context: QueryStringContext = {
       sources: [file],
       lenient: true,
-      baseIRI: file,
       [ActorHttpInruptSolidClientAuthn.CONTEXT_KEY_SESSION.name]: session
     }
-    const bindingsStream = await myEngine.queryBindings(`
-        SELECT ?id ?todo ?status ?dateCreated ?createdBy WHERE {
-         ?id <http://example.org/todolist/title> ?todo .
-         ?id <http://example.org/todolist/status> ?status .  
-         ?id  <http://example.org/todolist/dateCreated> ?dateCreated .
-         ?id <http://example.org/todolist/createdBy> ?createdBy . 
-        }`, context
-    )
-      .catch((error) => { alert(`Sorry! Couldnt fetch the data! ${String(error.message)} `) })
+    const query = `
+      PREFIX todo: <http://example.org/todolist/>
+      SELECT * WHERE {
+        ?id a todo:Task ;
+          todo:title ?todo ;
+          todo:status ?status ;
+          todo:dateCreated ?dateCreated ;
+          todo:createdBy ?createdBy .
+      }`
+
+    const bindingsStream = await myEngine.queryBindings(query, context)
     const bindings = await bindingsStream.toArray()
 
     // 2. Map bindings to a map of todos
-    const podTodos = {}
-    bindings.forEach((element) => {
-      const id = element.get('id').value
-      const text = element.get('todo').value
-      const statusFromPod = element.get('status').value
-      const status = statusFromPod.toLowerCase() === 'true'
-      const dateCreated = element.get('dateCreated').value
-      const createdBy = element.get('createdBy').value
-      const newTodo: TodoItem = { id, text, status, dateCreated, createdBy }
+    const podTodos: Record<string, object> = {}
+
+    for (const binding of bindings) {
+      const id = binding.get('id')?.value as string
+      const text = binding.get('todo')?.value as string
+      const statusFromPod = binding.get('status')?.value
+      const status = statusFromPod?.toLowerCase() === 'true'
+      const dateCreated = binding.get('dateCreated')?.value as string
+      const createdBy = binding.get('createdBy')?.value as string
+      const newTodo = { id, text, status, dateCreated, createdBy }
       podTodos[id] = newTodo
-    })
+    }
 
     // 3. update the current array with the pod todos.
     // I'm using a map to make sure I don't get duplicates

@@ -2,7 +2,6 @@ const path = require('path')
 const webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const NodePolyfillPlugin = require('node-polyfill-webpack-plugin')
-// const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin
 
 /** @type {webpack.Configuration} */
 module.exports = {
@@ -25,10 +24,6 @@ module.exports = {
       favicon: 'public/favicon.ico'
     }),
     new NodePolyfillPlugin()
-    /* new BundleAnalyzerPlugin({
-      analyzerMode: "static",
-      openAnalyzer: false // true to have the report open after build
-    }) */
   ],
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
