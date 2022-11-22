@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
 import { LoginButton, LogoutButton, useSession, CombinedDataProvider } from '@inrupt/solid-ui-react'
+import { ActorHttpInruptSolidClientAuthn } from '@comunica/actor-http-inrupt-solid-client-authn'
 import InputField from './InputField'
-import { QueryEngine } from '@comunica/query-sparql'
+import { QueryEngine } from '@comunica/query-sparql-link-traversal-solid'
+import { QueryStringContext } from '@comunica/types'
 import { TodoItem } from '../logic/model'
 import TodoList from './TodoList'
 
@@ -20,80 +22,92 @@ const Login: React.FC = (): JSX.Element => {
     if (!session.info.isLoggedIn) return
 
     // Setting the location for storing all the todo items.
+    const webIdString = session.info.webId as string
+
     void (async () => {
       const myEngine = new QueryEngine()
-      const bindingsStream = await myEngine.queryBindings(`SELECT ?o WHERE {
-           ?s <http://www.w3.org/ns/pim/space#storage> ?o.
+      const bindingsStream = await myEngine.queryBindings(`SELECT ?storage WHERE {
+           <${webIdString}> <http://www.w3.org/ns/pim/space#storage> ?storage .
           }`, {
-        sources: [`${session.info.webId as string}`]
+        sources: [webIdString]
       })
-      const bindings = await bindingsStream.toArray()
 
       // By default, our base starts from the webId containing folder
-      // TODO make this better
-      let baseUrl = (new URL('./', (session.info.webId as string))).toString()
-      try {
-        baseUrl = bindings[0].get('o').value
-      } catch (e) {
-      // apparently we can't do that
-      }
-      const containerUri: any = baseUrl + ('private/todos/' as string)
-      const file: any = (containerUri.split('Data')[0] as string) + ('todos' as string)
+      const bindings = await bindingsStream.toArray()
+      const storage = bindings.at(0)?.get('storage')?.value
+      const baseUrl = storage != null ? new URL(storage) : new URL('./', (session.info.webId as string))
+      const containerUri = baseUrl.href + 'private/todos/'
+      const file = (containerUri.split('Data')[0]) + ('todos' as string)
       setFile(file)
 
-      // If file exists, default TaskList is created.
+      try {
+        const query = `
+          PREFIX sodo: <http://example.org/todolist/>
 
-      await myEngine.queryVoid(` 
-      PREFIX sodo: <http://example.org/todolist/> 
-      
-      INSERT DATA{
-      <#default> a sodo:Task;
-      sodo:title "DefaultTaskList".
-      }`)
-      // setFile('http://localhost:3000/private/todos/todos.ttl')
+          INSERT DATA {
+            <#default> a sodo:TaskList ;
+              sodo:title "DefaultTaskList" .
+          }
+        `
+
+        const context: QueryStringContext = {
+          sources: [file],
+          baseIRI: file,
+          [ActorHttpInruptSolidClientAuthn.CONTEXT_KEY_SESSION.name]: session
+        }
+
+        await myEngine.queryVoid(query, context)
+      } catch (error) {
+        console.log(error) // TODO: add proper message in case relevant
+      }
+
       return file
     })()
   }, [session, session.info.isLoggedIn])
 
   // To get the oidcIssuer for the user webId input
   async function validate(event: React.ChangeEvent<HTMLInputElement>): Promise<void> {
-    const webIdInputValue: string = event.target.value
+    const webId: string = event.target.value
     const engineForOidc = new QueryEngine()
 
     const bindingsStream = await engineForOidc.queryBindings(
       `PREFIX solid: <http://www.w3.org/ns/solid/terms#>
 
-      SELECT ?o WHERE {
-        ?s <http://www.w3.org/ns/solid/terms#oidcIssuer> ?o .
-      }`, { sources: [`${webIdInputValue}`] }
-    ).catch((reason: any) => console.log(reason))
+      SELECT ?oidcIssuer WHERE {
+        <${webId}> <http://www.w3.org/ns/solid/terms#oidcIssuer> ?oidcIssuer .
+      }`, { sources: [webId] }
+    )
 
     const bindings = await bindingsStream.toArray()
-    bindings[0]?.get('o').value as unknown as boolean ? setOidcIssuer(bindings[0].get('o').value) : alert('This webId is not found in Open ID Connect discovery!!')
+    const oidcIssuer = bindings.at(0)?.get('oidcIssuer')?.value
+
+    if (oidcIssuer != null) {
+      setOidcIssuer(oidcIssuer)
+    }
   }
 
   // To get the name in the webId profile of the user
-  async function getName(webID): Promise<any> {
+  async function getName(webId: string): Promise<string> {
     const engineForOidc = new QueryEngine()
 
     const getUserName = await engineForOidc.queryBindings(`
     PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
       PREFIX foaf: <http://xmlns.com/foaf/0.1/>
 
-      SELECT ?s ?o WHERE {
-        ?s rdf:type foaf:Person .
-        ?s (foaf:givenName|foaf:name) ?o .
-      }`, { sources: [`${webID as string}`] }
+      SELECT ?name WHERE {
+        <${webId}> a foaf:Person ;
+          (foaf:givenName|foaf:name) ?name .
+      }`, { sources: [webId] }
     )
     const bindingsForName = await getUserName.toArray()
-    // if(bindingsForName[0] ?? '')setUserName(bindingsForName[0].get('o').value)
-    // else setUserName('No name found!!!')
-    bindingsForName[0]?.get('o').value as unknown as boolean ? setUserName(bindingsForName[0].get('o').value) : setUserName(webID)
-    return userName
+    const name = bindingsForName.at(0)?.get('name')?.value
+    return name ?? webID
   }
+
   const webID = session.info.webId ?? oidcIssuer
+
   if (session.info.isLoggedIn) {
-    void getName(webID)
+    getName(webID).then((name) => setUserName(name)).catch(console.log)
     return (
       <div>
         <CombinedDataProvider

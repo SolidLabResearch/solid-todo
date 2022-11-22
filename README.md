@@ -1,5 +1,5 @@
 # Solid-Todo
-Todo application which saves the todos on your Solid-pod.
+Todo application which saves the todos on your Solid-pod. There is a live version hosted on GitHub Pages [here](https://solidlabresearch.github.io/solid-todo-app-react/).
 
 ## Features
 - Web application to manage the to do list of a user after logging in.
@@ -8,19 +8,18 @@ Todo application which saves the todos on your Solid-pod.
 - Users can assign to do's to other people.
 
 ## Running locally
-1. Clone the repository.
-2. Install the Node dependencies
-   ```
-   npm install --legacy-peer-deps
-   ```
-3. Start the application
-   ```
-   npm run start
-   ```
 
-## The link to live version is [here](https://solidlabresearch.github.io/solid-todo-app-react/)
+After cloning the repository, install dependencies:
 
-----
+```
+npm ci
+```
+
+Then start the Webpack development server:
+
+```
+npm run start
+```
  
 ## Challenge completion criteria
 
