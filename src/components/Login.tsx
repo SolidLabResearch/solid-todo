@@ -40,6 +40,17 @@ const Login: React.FC = (): JSX.Element => {
       const containerUri: any = baseUrl + ('private/todos/' as string)
       const file: any = (containerUri.split('Data')[0] as string) + ('todos' as string)
       setFile(file)
+
+      // If file exists, default TaskList is created.
+      if(file){
+        await myEngine.queryVoid(` 
+      PREFIX sodo: <http://example.org/todolist/> 
+      
+      INSERT DATA{
+      <#default> a sodo:Task;
+      sodo:title "DefaultTaskList".
+      }`)
+      }
       // setFile('http://localhost:3000/private/todos/todos.ttl')
       return file
     })()
