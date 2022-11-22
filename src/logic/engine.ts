@@ -16,9 +16,6 @@ function mergeContext(context: QueryStringContext, session?: Session): QueryStri
 async function find(query: string, context: QueryStringContext, session?: Session): Promise<Bindings[]> {
   const bindingsStream: BindingsStream = await queryEngine.queryBindings(query, mergeContext(context, session))
   const bindings: Bindings[] = await bindingsStream.toArray()
-  console.log('Query:', query)
-  console.log('Context:', context)
-  console.log('Bindings:', bindings)
   return bindings
 }
 
