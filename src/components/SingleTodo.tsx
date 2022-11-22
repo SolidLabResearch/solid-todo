@@ -1,11 +1,9 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { type TodoItem } from '../logic/model'
+import { update } from '../logic/engine'
 import { AiFillEdit, AiFillDelete } from 'react-icons/ai'
 import { MdDone } from 'react-icons/md'
 import './style.css'
-import { QueryEngine } from '@comunica/query-sparql-link-traversal-solid'
-import { QueryStringContext } from '@comunica/types'
-import { ActorHttpInruptSolidClientAuthn } from '@comunica/actor-http-inrupt-solid-client-authn'
 
 const SingleTodo: React.FC<{
   todo: TodoItem
@@ -22,24 +20,16 @@ const SingleTodo: React.FC<{
     inputRef.current?.focus()
   }, [edit])
 
-  const myEngine = new QueryEngine()
-  const context: QueryStringContext = {
-    sources: [file],
-    lenient: true,
-    baseIRI: file
-  }
-  context[ActorHttpInruptSolidClientAuthn.CONTEXT_KEY_SESSION.name] = session
-
   // to delete
   const handleDelete = async (id): Promise<any> => {
     setTodos(todos.filter((todo) => todo.id !== id))
 
-    await myEngine.queryVoid(`
-      PREFIX tod: <>
-      PREFIX tur: <http://www.w3.org/ns/iana/media-types/text/turtle#>
-      PREFIX sodo: <http://example.org/todolist/>
-      
-      DELETE WHERE {<${todo.id}> ?p ?o.}`, context)
+    const query = `
+      DELETE WHERE {
+        <${todo.id}> ?p ?o .
+      }
+    `
+    update(query, { sources: [file], baseIRI: file }, session)
       .then(() => { confirm('Deleting the selected todo entry!') })
       .catch((error) => { alert(`Unable to delete todo: ${String(error.message)}`) })
   }
@@ -54,14 +44,22 @@ const SingleTodo: React.FC<{
     const createdDate: string = new Date(Date.now()) as unknown as string
     setEdit(false)
 
-    await myEngine.queryVoid(`
-    PREFIX tod: <>
-      PREFIX tur: <http://www.w3.org/ns/iana/media-types/text/turtle#>
-      PREFIX sodo: <http://example.org/todolist/>
+    const query = `
+      PREFIX todo: <http://example.org/todolist/>
 
-      DELETE {<${todo.id}> <http://example.org/todolist/title> "${todo.text}".}
-      INSERT {<${todo.id}> <http://example.org/todolist/title> "${editTodo}"; <http://example.org/todolist/dateModified> "${createdDate}".}
-      WHERE  {<${todo.id}> <http://example.org/todolist/title> "${todo.text}".}`, context)
+      DELETE {
+        <${todo.id}> todo:title "${todo.text}" .
+      }
+      INSERT {
+        <${todo.id}> todo:title "${editTodo}" ;
+          todo:dateModified "${createdDate}" .
+      }
+      WHERE {
+        <${todo.id}> todo:title "${todo.text}" .
+      }
+    `
+
+    update(query, { sources: [file], baseIRI: file }, session)
       .then(() => { confirm('Updated the todo item from ' + todo.text + ' to ' + editTodo) })
       .catch((error) => { alert(`Sorry! Update failed! : ${String(error.message)}`) })
   }
@@ -81,14 +79,20 @@ const SingleTodo: React.FC<{
 
     newStatus as unknown as boolean ? currentStatus = 'completed' : currentStatus = 'pending'
 
-    await myEngine.queryVoid(`
-    PREFIX tod: <>
-      PREFIX tur: <http://www.w3.org/ns/iana/media-types/text/turtle#>
-      PREFIX sodo: <http://example.org/todolist/>
+    const query = `
+      PREFIX todo: <http://example.org/todolist/>
       
-      DELETE {<${todo.id}> <http://example.org/todolist/status> "${oldStatus}".}
-      INSERT {<${todo.id}> <http://example.org/todolist/status> "${newStatus}".}
-      WHERE  {<${todo.id}> <http://example.org/todolist/title> "${todo.text}".}`, context)
+      DELETE {
+        <${todo.id}> todo:status "${oldStatus}" .
+      }
+      INSERT {
+        <${todo.id}> todo:status "${newStatus}" .
+      }
+      WHERE {
+        <${todo.id}> todo:title "${todo.text}" .
+      }
+    `
+    update(query, { sources: [file], baseIRI: file }, session)
       .then(() => { confirm('Todo status of ' + todo.text + ' changed to ' + currentStatus) })
       .catch((error) => { alert(`Sorry! Failed to change the status of the todo item : ${String(error.message)}`) })
   }

@@ -1,8 +1,6 @@
 import { useRef, useState } from 'react'
-import { QueryEngine } from '@comunica/query-sparql-link-traversal-solid'
-import { QueryStringContext } from '@comunica/types'
-import { ActorHttpInruptSolidClientAuthn } from '@comunica/actor-http-inrupt-solid-client-authn'
 import { TodoItem } from '../logic/model'
+import { update } from '../logic/engine'
 
 const InputField = ({ todos, setTodos, file, session }: any): any => {
   const inputRef = useRef<HTMLInputElement>(null)
@@ -10,30 +8,26 @@ const InputField = ({ todos, setTodos, file, session }: any): any => {
 
   // Inserts new todo item to the pod.
   const addTodo = async (todo: string): Promise<any> => {
-    const myEngine = new QueryEngine()
-    const context: QueryStringContext = {
-      sources: [file],
-      lenient: true,
-      baseIRI: file,
-      [ActorHttpInruptSolidClientAuthn.CONTEXT_KEY_SESSION.name]: session
-    }
     const id = Date.now()
     const createdDate: string = new Date(Date.now()) as unknown as string
     const status: string = 'false'
-
-    await myEngine.queryVoid(`
-      PREFIX sodo: <http://example.org/todolist/> 
+    const query = `
+      PREFIX todo: <http://example.org/todolist/> 
       
       INSERT DATA{
-      <#${id}> a sodo:Task;
-      sodo:title "${todo}";
-      sodo:status "${status}";
-      sodo:dateCreated "${createdDate}";
-      sodo:createdBy "${session.info.webId as string}";
-      sodo:isPartOf <#default> .
-      }`, context)
+      <#${id}> a todo:Task ;
+        todo:title "${todo}" ;
+        todo:status "${status}" ;
+        todo:dateCreated "${createdDate}" ;
+        todo:createdBy "${session.info.webId as string}" ;
+        todo:isPartOf <#default> .
+      }
+    `
+
+    update(query, { sources: [file], baseIRI: file }, session)
       .then(() => { confirm('New task  added to your pod!') })
       .catch((error) => { alert(`Inserting new task failed: ${String(error.message)}`) })
+
     const newTodo: TodoItem = { id, text: todo, status: status === 'true', dateCreated: createdDate, createdBy: session.info.webId }
     setTodos([...todos, newTodo])
 
