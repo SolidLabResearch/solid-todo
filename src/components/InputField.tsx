@@ -13,10 +13,12 @@ const InputField: React.FC<InputFieldProps> = ({ tasks, setTasks, taskLocation }
 
   function handleAdd(event: React.FormEvent): void {
     event.preventDefault()
-    createTask(inputValue, taskLocation)
-      .then((createdTask) => setTasks([...tasks, createdTask].sort((a, b) => a.title.localeCompare(b.title))))
-      .catch(() => alert('Inserting new task failed'))
-    setInputValue('')
+    if (inputValue.length > 0) {
+      createTask(inputValue, taskLocation)
+        .then((createdTask) => setTasks([...tasks, createdTask].sort((a, b) => a.title.localeCompare(b.title))))
+        .catch(() => alert('Inserting new task failed'))
+      setInputValue('')
+    }
   }
 
   return (
