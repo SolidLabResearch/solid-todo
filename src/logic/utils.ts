@@ -39,8 +39,7 @@ async function findName(webId: string): Promise<string> {
     PREFIX foaf: <http://xmlns.com/foaf/0.1/>
 
     SELECT ?name WHERE {
-      <${webId}> a foaf:Person ;
-        (foaf:givenName|foaf:name) ?name .
+      <${webId}> (foaf:givenName|foaf:name) ?name .
     }
   `
   const bindingsArray = await find(query, { sources: [webId] })
