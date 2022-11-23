@@ -1,97 +1,60 @@
-import React, { useEffect, useState, useRef } from 'react'
+import { useState } from 'react'
 import { AiFillEdit, AiFillDelete } from 'react-icons/ai'
 import { MdDone } from 'react-icons/md'
 import { type ITask } from '../logic/model'
 import { deleteTask, updateTaskTitle, toggleTaskStatus } from '../logic/utils'
 
-import './style.css'
-
 interface SingleTodoProps {
-  todo: ITask
-  todos: ITask[]
-  setTodos: React.Dispatch<React.SetStateAction<ITask[]>>
-  file: string
+  task: ITask
+  tasks: ITask[]
+  setTasks: React.Dispatch<React.SetStateAction<ITask[]>>
+  taskLocation: string
 }
 
-const SingleTodo: React.FC<SingleTodoProps> = ({ todo, todos, setTodos, file }) => {
-  const [edit, setEdit] = useState<boolean>(false)
-  const [editTodo, setEditTodo] = useState<string>('')
-  const inputRef = useRef<HTMLInputElement>(null)
+const SingleTodo: React.FC<SingleTodoProps> = ({ task, tasks, setTasks, taskLocation }) => {
+  const [editMode, setEditMode] = useState<boolean>(false)
+  const [inputValue, setInputValue] = useState<string>('')
 
-  useEffect(() => {
-    inputRef.current?.focus()
-  }, [edit])
+  function replaceUpdatedTaskInList(updatedTask: ITask): void {
+    setTasks([...tasks.filter((t) => t.id !== task.id), updatedTask].sort((a, b) => a.title.localeCompare(b.title)))
+  }
 
-  // to delete
-  const handleDelete = async (task: ITask): Promise<any> => {
-    deleteTask(task.id, file)
-      .then(() => { confirm('Deleting the selected todo entry!') })
+  function deleteHandler(task: ITask): void {
+    deleteTask(task.id, taskLocation)
+      .then(() => setTasks(tasks.filter((t) => t.id !== task.id)))
       .catch((error) => { alert(`Unable to delete todo: ${String(error.message)}`) })
   }
 
-  // to edit todo item
-  const editTheTodo = async (e: React.FormEvent, id: string): Promise<any> => {
-    e.preventDefault()
-    setTodos(
-      todos.map((todo) => (todo.id === id ? { ...todo, title: editTodo } : todo))
-    )
-    // Modified date for an edited todo item.
-    setEdit(false)
-
-    updateTaskTitle(todo, editTodo, file)
-      .then(() => confirm('Updated the todo item from ' + todo.title + ' to ' + editTodo))
+  function editHandler(task: ITask): void {
+    setEditMode(false)
+    updateTaskTitle(task, inputValue, taskLocation)
+      .then((updatedTask) => replaceUpdatedTaskInList(updatedTask))
       .catch(() => alert('Update failed'))
   }
 
-  // to set the todo status. false -> pending. true -> completed.
-  const doneTodo = async (task: ITask): Promise<void> => {
-    toggleTaskStatus(task, file)
-      .then(() => confirm('Todo status of ' + todo.title + ' changed to ' + (todo.status ? 'true' : 'false')))
+  function editModeHandler(task: ITask): void {
+    setInputValue(!editMode ? task.title : '')
+    setEditMode(!editMode)
+  }
+
+  function statusHandler(task: ITask): void {
+    toggleTaskStatus(task, taskLocation)
+      .then((updatedTask) => {
+        replaceUpdatedTaskInList(updatedTask)
+        // confirm('Todo status of ' + task.title + ' changed to ' + (updatedTask.status ? 'true' : 'false'))
+      })
       .catch(() => { alert('Failed to change the status of the todo item') })
   }
 
-  function handleEdit(e, id): any {
-    void editTheTodo(e, id)
-  }
-
-  function handleDone(id): any {
-    void doneTodo(id)
-  }
-
   return (
-    <form className="todos__single" onSubmit={(e) => handleEdit(e, todo.id)}>
-      {edit
-        ? (
-          <input
-            value={editTodo}
-            onChange={(e) => setEditTodo(e.target.value)}
-            className="todos__single--text"
-            ref={inputRef}
-          />)
-        : todo.status
-          ? (
-            <s className="todos__single--text">{todo.title} </s>)
-          : (
-            <span className="todos__single--text">{todo.title} </span>)}
-
-      <div>
-        <span className='icon'
-          onClick={() => {
-            if (!edit) {
-              setEdit(!edit)
-            }
-          }}>
-          <AiFillEdit />
-        </span>
-
-        <span className='icon' onClick={() => handleDelete(todo) as unknown}>
-          <AiFillDelete />
-        </span>
-
-        <span className='icon' onClick={() => handleDone(todo)}>
-          <MdDone />
-        </span>
-      </div>
+    <form className="todo-card" onSubmit={(e) => { e.preventDefault(); editHandler(task) } }>
+      {editMode
+        ? (<input value={inputValue} onChange={(e) => setInputValue(e.target.value)} />)
+        : (<p className={task.status ? 'done' : ''}>{task.title}</p>)
+      }
+      <AiFillEdit className='ml-auto icon' onClick={() => editModeHandler(task) } />
+      <AiFillDelete className='icon' onClick={() => deleteHandler(task) } />
+      <MdDone className='icon' onClick={() => statusHandler(task)} />
     </form>
   )
 }
