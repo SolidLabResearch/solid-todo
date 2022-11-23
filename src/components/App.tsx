@@ -1,14 +1,14 @@
-import { Session } from '@inrupt/solid-client-authn-browser'
+import { session } from '../logic/session'
+
 import Login from './Login'
+import TodoList from './TodoList'
 
-interface IAppProps {
-  ses?: Session
-}
-
-const App: React.FC<IAppProps> = (): JSX.Element => {
-  return (
-    <Login />
-  )
+const App: React.FC = () => {
+  if (session.info.isLoggedIn) {
+    return (<TodoList webId={session.info.webId as string} />)
+  } else {
+    return (<Login />)
+  }
 }
 
 export default App

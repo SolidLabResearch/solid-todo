@@ -1,7 +1,6 @@
-const path = require('path')
+const { resolve } = require('path')
 const webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-const NodePolyfillPlugin = require('node-polyfill-webpack-plugin')
 
 /** @type {webpack.Configuration} */
 module.exports = {
@@ -10,7 +9,7 @@ module.exports = {
   devtool: 'source-map',
   stats: 'minimal',
   output: {
-    path: path.resolve(__dirname, 'build')
+    path: resolve(__dirname, 'build')
   },
   devServer: {
     host: 'localhost',
@@ -21,10 +20,9 @@ module.exports = {
   plugins: [
     new webpack.ProgressPlugin(),
     new HtmlWebpackPlugin({
-      template: 'public/index.html',
-      favicon: 'public/favicon.ico'
-    }),
-    new NodePolyfillPlugin()
+      template: resolve(__dirname, 'public', 'index.html'),
+      favicon: resolve(__dirname, 'public', 'icon.svg')
+    })
   ],
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
@@ -44,7 +42,8 @@ module.exports = {
       },
       {
         test: /\.css$/,
-        use: ['style-loader', 'css-loader', 'postcss-loader']
+        use: ['style-loader', 'css-loader', 'postcss-loader'],
+        exclude: /node_modules/
       }
     ]
   }
