@@ -165,7 +165,7 @@ async function createTask(taskTitle: string, url: string): Promise<ITask> {
 
 async function registerDefaultTaskList(url: string): Promise<void> {
   const query = `
-    PREFIX todo: <http://example.org/todolifilest/>
+    PREFIX todo: <http://example.org/todolist/>
 
     INSERT DATA {
       <#default> a todo:TaskList ;
